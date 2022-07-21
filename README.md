@@ -18,7 +18,7 @@
  
 ### Elastic load balancer
  - Khi tạo load balancer => cần tạo target group => cần chỉ định target type => Khi tạo xong target group KHÔNG THỂ thay đổi target type
- - Có 3 loại target types:
+ - #### Target types:
    - instance: chỉ định bởi các ID instance
    - ip: Chỉ định bởi các IP (Có thể đặt range dải mạng, etc: 10.0.0.0/8)
    - Lambda: Mục tiêu là 1 hàm lambda
