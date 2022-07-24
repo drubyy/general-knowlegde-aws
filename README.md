@@ -1,9 +1,19 @@
 # note-aws-developer-associate-level
 
+### EC2
+ - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
+ - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
+ Sự khác nhau giữa dedicated instance và dedicated host
+ ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
+
 ### Lambda
  - Càng tăng RAM thì CPU càng tăng (không thể tách biệt 1 trong 2, min = 128MB, max = 10GB)
  - Để cải thiện perfomance có thể
    - Tách biệt phần kết nối DB khỏi hàm(ví dụ có 10 request liên tục, nếu nhét connect DB vào trong hàm thì có mỗi lần xử lý sẽ phải connect lại, còn nếu tách ra ngoài thì chỉ cần connect 1 lần, rồi 9 lần còn lại chỉ cần xử lý logic sau đó mà k cần kết nối lại DB)
+<hr/>
+
+### API Gateway
+ - Để custom response trả về => sử dụng API Gateway mapping templates
 <hr/>
 
 ### SQS
@@ -73,6 +83,8 @@
    - 504: Timeout
    - 403: bị chặn bởi AWS WAF
  - Khi ELB được tạo, nó sẽ nhận được tên DNS công khai, tên DNS này không thay đổi, nhưng public IP có thể thay đổi => nên sử dụng DNS thay vì public IP
+ - Khi muốn phân tích về IP client request cũng như độ trễ request thì có thể sử dụng ALB access logs
+ - ELB giao tiếp với các EC2 instances bằng cách sử dụng IP private
 <hr/>
 
 ### Auto Scaling
@@ -80,6 +92,7 @@
  - Không tự động attach volumn nếu ổ đĩa sắp hết dung lượng
  - Không tính phí
  - Khi sử dụng chung với ELB, cần đổi health check type từ EC2 -> ELB nếu không sẽ không tự replace unhealth instances
+ - Chỉ sử dụng trên 1 region (bao gồm tất cả AZ), không thể sử dụng đối với multi region
 <hr/>
  
 ### S3:
@@ -162,6 +175,7 @@
 
    - Traffic Splitting: Deploy theo chiến lược Immutable tuy nhiên sẽ cắt số traffic nhất định đến instances mới để thử nghiệm, nếu hoạt động tốt sẽ chuyển 100% lưu lượng sang instances mới
    - Blue/Green (đọc bên dưới trong AWS CodeDeploy)
+ - Đặt config theo quy ước đặt tên: .ebextensions/<mysettings>.config
 <hr/>
 
 ### CloudTrail
@@ -237,6 +251,30 @@
    - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key
 <hr/>
 
+### AWS Serverless Application Model (SAM)
+ - Sử dụng để định nghĩa, build các ứng dụng không máy chủ, nó cung cấp cú pháp viết tắt để diễn đạt các hàm, API, database và ánh xạ event
+ ![image](https://user-images.githubusercontent.com/57032236/180653207-b8ee7264-5d25-4384-8084-478ce8b202de.png)
+
+- SAM hỗ trợ các resource types
+  - AWS::Serverless::Api
+
+  - AWS::Serverless::Application
+
+  - AWS::Serverless::Function
+
+  - AWS::Serverless::HttpApi
+
+  - AWS::Serverless::LayerVersion
+
+  - AWS::Serverless::SimpleTable
+
+  - AWS::Serverless::StateMachine
+<hr/>
+
+### AWS Serverless Application Repository (SAR)
+ - Là một kho các ứng dụng serverless có sẵn, có thể tái sử dụng lại
+<hr/>
+
 ### CloudFront
  - CloundFront route tất cả request đến primary origin, chỉ gửi request đến origin phụ khi một request đến origin chính không thành công
 <hr/>
@@ -252,9 +290,49 @@
 <hr/>
 
 ### AWS Secret Manager
- - Sử dụng để quản lý các bí mật cần thiết để truy cập các ứng dụng, dịch vụ và tài nguyên AWS, ví dụ như mật khẩu database, API key,...
- - Cho phép xoay vòng
+ - Sử dụng để quản lý các bí mật cần thiết để TRUY CẬP CÁC ỨNG DỤNG, dịch vụ và tài nguyên AWS, ví dụ như mật khẩu database, API key,...
+ - Hỗ trợ automatic rotate (Xoay định kỳ)
  - Truy xuất dữ liệu trong AWS Secret Manager bằng cách call API
+ - Max size = 64KB
+ - Sử dụng KMS để encrypt/decrypt
+ - Có thể truy cập từ tài khoản AWS khác
+<hr/>
+
+### AWS Parameter Store
+ - Cũng có thể sử dụng để lưu trữ các giá trị như SETTINGS, mật khẩu database tuy nhiên sẽ lưu dưới dạng THAM SỐ để có thể tham chiếu trên EC2, ECS, Lambda,...
+ - Không hỗ trợ rotate
+ - Sử dụng KMS để encrypt/decrypt
+ - Standard parameter max size = 4KB, Advance parameter max size = 8KB
+ - Được thiết kế để sử dụng cho nhiều usecase hơn ví dụ như setting URL, database name,...
+ - Có thể lưu được dưới dạng plaintext, secret string
+ - Không thể truy cập từ tài khoản AWS khác
+ - Free khi sử dụng standard parameter, nếu sử dụng advance thì sẽ tính phí dựa trên số lượt gọi API
+<hr/>
+
+### KMS
+ - Sử dụng để tạo, quản lý các khóa
+ - Tích hợp với CloudTrail để ghi lại nhật ký sư dụng khóa
+ - Không hỗ trợ rotate
+ - Hỗ trợ 3 loại CMK (Customer master key)
+   - Customer managed key: Do chính mình tạo, sở hữu và quản lý toàn quyền
+   - AWS managed key: Khóa do AWS thay mặt mình tạo và quản lý bởi AWS
+   - AWS owned key: Là các khóa do AWS sở hữu và được sử dụng chung đối với nhiều tài khoản AWS (sẽ không hiển thị trên console)
+   
+ ![image](https://user-images.githubusercontent.com/57032236/180655975-5eb54e40-f48b-469a-9a4d-fd2681396288.png)
+<hr/>
+
+### AWS Route 53
+ - Dịch vụ dùng để định tuyến, phân giải domain sang dạng IP để điều hướng request
+ - routing policy
+   - Simple routing policy: Định tuyến bình thường, không có gì đặc biệt
+   - Failover routing policy: Có thể hiểu là chủ động đặt routing khi tài nguyên unhealth
+   - Geolocation routing policy: Định tuyến dựa trên khu vực địa lý của client
+   - Geoproximity routing policy: Định tuyến dựa trên bản đồ tự định nghĩa
+     ![image](https://user-images.githubusercontent.com/57032236/180654793-fa8c2c9b-6410-4299-876c-acec38213f4f.png)
+   - Latency routing policy: Định tuyến dựa trên độ trễ
+   - IP-based routing policy: Định tuyến dựa trên IP client
+   - Multivalue answer routing policy
+   - Weighted routing policy: Định tuyến dựa trên trọng số, ví dụ có 2 môi trường => có thể định tuyến 30% đến môi trường 1, 70% đến môi trường 2 (% là tùy ý)
 <hr/>
 
 ### AWS Trusted advisor
@@ -281,3 +359,16 @@
 ### AWS Budget
  - Cần dữ liệu của 5 tuần để có thể dự báo ngân sách
 <hr/>
+
+### AWS Organizations Service Control Policy (SCP)
+ - Sử dụng để xác định quyền TỐI THIỂU cho các tài khoản trong organization hoặc Orgazination Unit (Đơn vị con của organization)
+ - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
+<hr/>
+
+### Permissions boundary
+ - Sử dụng để xác định quyền tối đa được phép đối với 1 thực thể IAM (user/role)
+ - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
+<hr/>
+
+### Only root user (Những hành động mà chỉ có root user làm được)
+ - Cặp khóa CloudFront
