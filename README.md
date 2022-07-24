@@ -25,14 +25,17 @@
    - ip: Chỉ định bởi các IP (Có thể đặt range dải mạng, etc: 10.0.0.0/8)
    - Lambda: Mục tiêu là 1 hàm lambda
  - Sử dụng header X-Forwarded-For để xem IP của client request nếu sử dụng load balancer
+<hr/>
 
 ### Auto Scaling
  - Health check + thay thế các unhealth instances
  - Không tự động attach volumn nếu ổ đĩa sắp hết dung lượng
+<hr/>
  
 ### S3:
  - Đối với event notification, nếu không bật chế độ version thì khi 2 request đều ghi vào 1 đối tượng => có thể sẽ chỉ có 1 event notification được trigger
- 
+<hr/>
+
 ### IAM
  - #### IAM access advisor
    - Sử dụng để scan / phân tích permission lần cuối được sử dụng bởi user / role là khi nào, từ đó có thể thấy được các quyền dư thừa => loại bỏ quyền dư thừa không sử dụng
@@ -42,7 +45,8 @@
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
    - Chỉ sử dụng được đối với chứng chỉ SSL/TLS bên ngoài, không sử dụng được đối với chứng chỉ do ACM cung cấp
    - Không thể quản lý chứng chỉ ở bảng điều khiển
-   
+<hr/>
+
 ### DynamoDB
  - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
  - #### Eventually consistent
@@ -62,16 +66,19 @@
 ### ECS
  - Để config ECS, viết config trong file /etc/ecs/ecs.config
    - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
-   
+<hr/>   
+
 ### EBS
  - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
    - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
-   
+<hr/>
+
 ### AWS Secret Manager
  - Sử dụng để quản lý các bí mật cần thiết để truy cập các ứng dụng, dịch vụ và tài nguyên AWS, ví dụ như mật khẩu database, API key,...
  - Cho phép xoay vòng
  - Truy xuất dữ liệu trong AWS Secret Manager bằng cách call API
-   
+<hr/>
+
 ### AWS Trusted advisor
  - Là một công cụ trực tuyến cung cấp phương pháp cải thiện in real-time theo best practice của AWS về:
    - cost optimization (tối ưu hóa chi phí)
@@ -79,16 +86,20 @@
    - fault tolerance (khả năng chịu lỗi)
    - service limits (giới hạn dịch vụ một cách đơn giản nhất)
    - and performance improvement (cải thiện hiệu suất).
-   
+<hr/>
+
 ### AWS Inspector
  - Là một dịch vụ đánh giá bảo mật tự động giúp cải thiện tính bảo mật và tuân thủ của các application được deploy trên AWS
  - Đánh giá về:
    - exposure (mức độ phơi nhiễm)
    - vulnerabilities (lỗ hổng bảo mật)
    - deviations (độ sai lệch so với best practice)
- 
+<hr/>
+
 ### AWS CDK
  - Sử dụng để định nghĩa các resources bằng các ngôn ngữ lập trình quen thuộc như: python, java, js,...
- 
+<hr/>
+
 ### AWS Budget
  - Cần dữ liệu của 5 tuần để có thể dự báo ngân sách
+<hr/>
