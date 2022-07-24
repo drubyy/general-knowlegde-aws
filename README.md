@@ -2,6 +2,7 @@
 
 ### SQS
  - Thời gian lưu trữ message có thể setting: 1 - 14 days. Mặc định là 4 ngày
+ - Có thể chỉ định số lượng message tối đa được phép lấy trong 1 lần (max = 10)
  
  - #### messageVisibleTimeout
    Để tránh không cho nhiều consumer xử lý cùng 1 message thì có messageVisibleTimeout, có thể hiểu đây là thời gian tối đa consumer được phép xử lý message (default = 30s, minimum = 0, maximum = 12h)
@@ -15,6 +16,7 @@
    - Tối thiểu là 1 byte (1 ký tự)
    - Max size sẽ là 256KB
    - Có thể sử dụng Amazon SQS Extended Client Library for Java để tăng kích thước tối đa lên 2GB
+<hr/>
  
 ### Elastic load balancer
  - Khi tạo load balancer => cần tạo target group => cần chỉ định target type => Khi tạo xong target group KHÔNG THỂ thay đổi target type
@@ -22,9 +24,11 @@
    - instance: chỉ định bởi các ID instance
    - ip: Chỉ định bởi các IP (Có thể đặt range dải mạng, etc: 10.0.0.0/8)
    - Lambda: Mục tiêu là 1 hàm lambda
+ - Sử dụng header X-Forwarded-For để xem IP của client request nếu sử dụng load balancer
 
 ### Auto Scaling
- - Health check + replace unhealth instance
+ - Health check + thay thế các unhealth instances
+ - Không tự động attach volumn nếu ổ đĩa sắp hết dung lượng
  
 ### S3:
  - Đối với event notification, nếu không bật chế độ version thì khi 2 request đều ghi vào 1 đối tượng => có thể sẽ chỉ có 1 event notification được trigger
@@ -38,6 +42,30 @@
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
    - Chỉ sử dụng được đối với chứng chỉ SSL/TLS bên ngoài, không sử dụng được đối với chứng chỉ do ACM cung cấp
    - Không thể quản lý chứng chỉ ở bảng điều khiển
+   
+### DynamoDB
+ - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
+ - #### Eventually consistent
+   - Response có thể sẽ không phải data mới nhất, có thể hiểu rằng response sẽ là data tại lúc call, trong quá trình call, data có được thay đổi cũng sẽ không được trả về data mới nhất => nhanh hơn so với strongly consistent
+ - #### Strongly consistent
+   - Trả về dữ liệu được cập nhật mới nhất, tuy nhiên sẽ đi kèm với 1 số nhược điểm:
+     - Có độ trễ cao hơn so với eventually consistent
+     - Không hỗ trợ đối với global secondary indexes (chỉ mục thứ cấp toàn cầu)
+     - Sử dụng nhiều read capacity hơn so với eventually consistent
+ - DynamoDB mặc định sử dụng Eventually consistent, trừ khi setting khác
+ - Các câu lệnh GetItem, Query, Scan cho phép thêm option ConsistentRead = true để sử dụng Strongly Consistent trong quá trình thao tác.
+ - Amazon DynamoDB Accelerator (DAX)
+   - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB
+   - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
+   - Tính phí theo giờ và các instance DAX không cần cam kết dài hạn
+   
+### ECS
+ - Để config ECS, viết config trong file /etc/ecs/ecs.config
+   - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
+   
+### EBS
+ - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
+   - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
    
 ### AWS Secret Manager
  - Sử dụng để quản lý các bí mật cần thiết để truy cập các ứng dụng, dịch vụ và tài nguyên AWS, ví dụ như mật khẩu database, API key,...
