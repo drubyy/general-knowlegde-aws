@@ -62,7 +62,8 @@
    - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB
    - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
    - Tính phí theo giờ và các instance DAX không cần cam kết dài hạn
-   
+<hr/>
+
 ### ECS
  - Để config ECS, viết config trong file /etc/ecs/ecs.config
    - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
