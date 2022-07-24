@@ -30,6 +30,7 @@
 ### Auto Scaling
  - Health check + thay thế các unhealth instances
  - Không tự động attach volumn nếu ổ đĩa sắp hết dung lượng
+ - Không tính phí
 <hr/>
  
 ### S3:
@@ -62,6 +63,27 @@
    - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB
    - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
    - Tính phí theo giờ và các instance DAX không cần cam kết dài hạn
+<hr/>
+
+### Elastic Beanstalk
+ - Sử dụng để triển khai, mở rộng các web application được viết bằng Java, .NET, PHP, Node.js, Ruby, Python, Go và Docker trên những máy chủ: Apache, Nginx, Passenger và IIS
+ - Chỉ cần upload code lên mà không cần lo về vấn đề deployment, performance về mặt infra, monitoring,...
+ - Vẫn có quyền access vào các resources
+ - Không tính thêm phí, chỉ tính phí các tài nguyên sử dụng như: EC2, ECS,...
+ - #### Deployment stragies
+   - All-at-Once: Tất cả instances trong 1 lần
+     ![image](https://user-images.githubusercontent.com/57032236/180630279-cb57e0fb-59c5-48c7-add6-2fb153e2117c.png)
+     
+   - Rolling: Deploy thành nhiều đợt cuốn chiếu
+     ![image](https://user-images.githubusercontent.com/57032236/180630281-b6908b64-4d07-49dd-bd16-f2ca3db200e3.png)
+     
+   - Rolling with Additional Batch: Tách ra thành nhiều lô, lô đầu tiên sẽ tạo ra số instance EC2 mới thay vì các instances EC2 đã có (1 lô có thể chỉ định số lượng instances).
+     ![image](https://user-images.githubusercontent.com/57032236/180630288-3cb97a08-0658-4619-849a-97208d6994f1.png)
+
+   - Immutable: Triển khai toàn bộ instance mới, sau đó sẽ swap instances mới với instance cũ
+     ![image](https://user-images.githubusercontent.com/57032236/180630302-81cb5f2e-a36f-4b76-a8a9-20b80820e4e0.png)
+
+   - Traffic Splitting: Deploy theo chiến lược Immutable tuy nhiên sẽ cắt số traffic nhất định đến instances mới để thử nghiệm, nếu hoạt động tốt sẽ chuyển 100% lưu lượng sang instances mới
 <hr/>
 
 ### ECS
