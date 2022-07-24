@@ -86,6 +86,26 @@
    - Traffic Splitting: Deploy theo chiến lược Immutable tuy nhiên sẽ cắt số traffic nhất định đến instances mới để thử nghiệm, nếu hoạt động tốt sẽ chuyển 100% lưu lượng sang instances mới
 <hr/>
 
+### AWS CodeDeploy
+ - Hỗ trợ auto deploy
+ - Các kiểu deploy
+   - In-place deployment
+     - Application trong nhóm target deploy sẽ bị dừng và deploy code, settings,... mới nhất rồi sau đó khởi động lại
+     - Chỉ hoạt động đới với EC2 / On-premises
+   - Blue-Green deployment: Giải quyết vấn đề downtime, mục đích và ý tưởng là sử dụng 2 tài nguyên phần cứng song song giống hệt nhau để tạo ra 2 môi trường production (blue và green).
+     - VD
+       - User đang sử dụng version code 1 (Blue)
+       - Version mới được deploy lên môi trường giống hệt blue => môi trường green
+       - Sau khi deploy xong nếu check OK => route traffic qua môi trường mới (green)
+       ![image](https://user-images.githubusercontent.com/57032236/180630810-05112a08-df77-4f7b-88c4-c0237e582d35.png)
+
+     - Ưu điểm:
+       - Zero downtime
+       - Dễ dàng rollback vì đã có sẵn môi trường blue
+    
+   
+<hr/>
+
 ### ECS
  - Để config ECS, viết config trong file /etc/ecs/ecs.config
    - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
