@@ -3,6 +3,7 @@
 ### EC2
  - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
  - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
+ 
  => Sự khác nhau giữa dedicated instance và dedicated host
  ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
 
