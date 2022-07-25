@@ -3,7 +3,7 @@
 ### EC2
  - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
  - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
- Sự khác nhau giữa dedicated instance và dedicated host
+ => Sự khác nhau giữa dedicated instance và dedicated host
  ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
 
 ### Lambda
@@ -32,6 +32,20 @@
    - Tối thiểu là 1 byte (1 ký tự)
    - Max size sẽ là 256KB
    - Có thể sử dụng Amazon SQS Extended Client Library for Java để tăng kích thước tối đa lên 2GB
+   - Usecase: Nếu hệ thống quan trọng về thông lượng, không quan trọng về thứ tự message => Sử dụng standard
+     VD: Có background job gửi email về chương trình giảm giá sản phẩm, khuyến mãi,...
+ - #### Types
+   - Standard
+     - Không giới hạn thông lượng (throughput) (Không giới hạn số lượt gọi API SendMessage, ReceiveMessage, DeleteMessage trong 1s)
+     - Đôi khi thứ tự delivery message sẽ khác với thứ tự đẩy vào queue
+   - FIFO
+     - Thông lượng cao nhưng có giới hạn
+       - Nếu sử dụng batch (Thao tác với nhiều SQS message 1 lúc đối với các API SendMessageBatch, ReceiveMessage, DeleteMessageBatch) hỗ trợ tối đa tương tác với 3000 messages mỗi giây, mỗi API tương đương 10 messages => tương đương 300 lệnh gọi API mỗi giây. Để tăng hạn ngạch (quota) có thể tạo ticket support
+       - Nếu không sử dụng batch => tối đa 300 lệnh gọi API mỗi giây (SendMessage, ReceiveMessage, DeleteMessage)
+     - Áp dụng cơ chế FIRST IN - FIRST OUT => message vào queue trước sẽ được delivery trước
+     - Usecase: Nếu hệ thống cần quan tâm đến thứ tự xử lý message
+       VD: Khi web cho phép người dùng đăng ký khóa học, cần xử lý logic đăng ký tài khoản người dùng trước khi đăng ký khóa học
+ - Sau khi tạo SQS queue => không thể thay đổi queue type
 <hr/>
 
 ### Kinesis
@@ -207,6 +221,14 @@
 - Hỗ trợ define các step buildcode
 - Sử dụng file buildspec.yml trong root-directory
 - Sử dụng local build bằng CodeBuild Agent để: test, debug
+<hr/>
+
+### AWS X-Ray
+- Là service hỗ trợ theo dấu và cho ra cái nhìn tổng quát khi ứng dụng sử dụng micro service (Ví dụ như web sử dụng các micro services => X-Ray sẽ chạy qua các micro service và tổng hợp lại cho ra 1 sơ đồ, từ đó có cái nhìn tổng quan)
+![image](https://user-images.githubusercontent.com/57032236/180803943-97e0828c-c6e3-4233-bdba-41670e5bf4f8.png)
+- Có thể sử dụng debug, tìm ra nguyên nhân gốc rễ
+- Tương thích với EC2, ECS, Lambda, SQS, SNS và Elastic Beanstalk
+- Sử dụng các ngôn ngữ: Java, Node.js, .NET
 <hr/>
 
 ### CloudFormation
