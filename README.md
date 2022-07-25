@@ -301,13 +301,19 @@
 ### CloudFront
  - CloundFront route tất cả request đến primary origin, chỉ gửi request đến origin phụ khi một request đến origin chính không thành công
 <hr/>
-
-### ECS
- - Để config ECS, viết config trong file /etc/ecs/ecs.config
-   - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
+ 
+### Elastic Container Registry (ECR)
+ - Là một dịch vụ để lưu trữ, quản lý các image docker tương tự dockerhub
 <hr/>   
 
+### ECS
+ - Dùng để quản lý các container docker
+ - Để config ECS, viết config trong file /etc/ecs/ecs.config
+   - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
+<hr/>
+
 ### EBS
+ - Có thể hiểu EBS như 1 ổ đĩa thêm cho EC2
  - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
    - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
 <hr/>
@@ -342,6 +348,16 @@
    - AWS owned key: Là các khóa do AWS sở hữu và được sử dụng chung đối với nhiều tài khoản AWS (sẽ không hiển thị trên console)
    
  ![image](https://user-images.githubusercontent.com/57032236/180655975-5eb54e40-f48b-469a-9a4d-fd2681396288.png)
+<hr/>
+ 
+### AWS Cognito User Pools
+ - Cung cấp dịch vụ quản lý, đăng ký, đăng nhập user (Có thể hiểu usecase sử dụng cho 1 app serverless, chỉ sử dụng lambda, API gateway chẳng hạn)
+ - Tích hợp sẵn, cung cấp giao diện đăng ký đăng nhập cho user, có thể custom lại view
+ - Hỗ trợ đăng ký, đăng nhập với bên thứ 3 như Facebook, Google, Amazon hoặc Apple hoặc những bên khác sử cung cấp SAML
+ - Quản lý được data users
+ - Hỗ trợ MFA (xác thực đa yếu tố), xác thực qua điện thoại, email
+ - Sau khi xác thực người dùng thành công sẽ trả về token JWT (JWT này sẽ có quyền thao tác với các resources AWS khác của mình tùy thuộc vào setting, ví dụ có thể cấp quyền cho JWT đó access S3,...)
+ - Sử dụng được với javascript, Android, IOS
 <hr/>
 
 ### AWS Route 53
