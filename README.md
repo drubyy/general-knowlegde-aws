@@ -11,6 +11,7 @@
  - Càng tăng RAM thì CPU càng tăng (không thể tách biệt 1 trong 2, min = 128MB, max = 10GB)
  - Để cải thiện perfomance có thể
    - Tách biệt phần kết nối DB khỏi hàm(ví dụ có 10 request liên tục, nếu nhét connect DB vào trong hàm thì có mỗi lần xử lý sẽ phải connect lại, còn nếu tách ra ngoài thì chỉ cần connect 1 lần, rồi 9 lần còn lại chỉ cần xử lý logic sau đó mà k cần kết nối lại DB)
+ - Khi thay đổi nội dung hàm lambda, cần thực hiện deploy lại nếu không sẽ vẫn chạy code cũ
 <hr/>
 
 ### API Gateway
@@ -191,6 +192,8 @@
    - Traffic Splitting: Deploy theo chiến lược Immutable tuy nhiên sẽ cắt số traffic nhất định đến instances mới để thử nghiệm, nếu hoạt động tốt sẽ chuyển 100% lưu lượng sang instances mới
    - Blue/Green (đọc bên dưới trong AWS CodeDeploy)
  - Đặt config theo quy ước đặt tên: .ebextensions/<mysettings>.config
+ - Nếu đặt các service trong ebextensions => khi deploy lại sẽ bị restart lại => data cũ sẽ không được giữ lại
+   => Muốn giữ lại data cũ cần tách riêng service đó ra rồi tham chiếu vào Elastic Beanstalk
 <hr/>
 
 ### CloudTrail
@@ -270,8 +273,11 @@
  - Function:
    - !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
    - !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
-   - !Ref => Trả về giá trị của tham số hoặc tài nguyên được chỉ định
+   - !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
    - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key
+ - #### Change sets & Drift detection
+   - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
+   - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn
 <hr/>
 
 ### AWS Serverless Application Model (SAM)
@@ -411,3 +417,8 @@
 
 ### Only root user (Những hành động mà chỉ có root user làm được)
  - Cặp khóa CloudFront
+ <hr/>
+ 
+### NOTE SOMETHINGS
+ - Khi muốn test command CLI mà không muốn ảnh hưởng resource thật => Sử dụng option --dry-run
+ - Có thể tạo key_pair từ khóa private cá nhân (.pem) có sẵn
