@@ -81,6 +81,8 @@
 
 ### CloudTrail
  - Theo dõi và ghi lại hoạt động của ACCOUNT đối với các resource AWS => khi cần check lại thay đổi resource theo scope USER NÀO thay đổi => nghĩ đến cloudtrail
+ - Mặc định các log trong cloudtrail được mã hóa SSE
+ - Mặc định cloudtrail sẽ chỉ track những actions ở bucket-level, nếu muốn track đến object-level thì cần bật S3 data events
  - NOTE
    - cloudtrail sẽ không ghi lại sự kiện 'CreateVolume' khi EBS được tạo trong quá trình launch EC2
 <hr/>
@@ -102,6 +104,8 @@
      - Ưu điểm:
        - Zero downtime
        - Dễ dàng rollback vì đã có sẵn môi trường blue
+ - Lifecycle Event Hook
+   ![image](https://user-images.githubusercontent.com/57032236/183232015-edf2a8ba-0642-4e7b-8ee2-7df9945ee86e.png)
 <hr/>
 
 ### CodeBuild
@@ -151,6 +155,7 @@
  - Khi ELB được tạo, nó sẽ nhận được tên DNS công khai, tên DNS này không thay đổi, nhưng public IP có thể thay đổi => nên sử dụng DNS thay vì public IP
  - Khi muốn phân tích về IP client request cũng như độ trễ request thì có thể sử dụng ALB access logs
  - ELB giao tiếp với các EC2 instances bằng cách sử dụng IP private
+ - Để tránh việc re-authenticate cho client khi sử dụng ELB (nhiều instance sẽ không cùng session nếu không sử dụng chung 1 nơi lưu trữ session), ta có thể enable sticky sessions, khi nhận request lần đầu từ client nếu chưa có ghi nhận nào trước đó, nó sẽ tạo ra 1 cookie có tên là AWSALB, sau đó khi client cũ đó gửi request lại, nó sẽ routing cho request đó đến instance trước đó đã xử lý request để tránh re-authenticate
 <hr/>
 
 ### Elastic Beanstalk
@@ -203,6 +208,9 @@
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
    - Chỉ sử dụng được đối với chứng chỉ SSL/TLS bên ngoài, không sử dụng được đối với chứng chỉ do ACM cung cấp
    - Không thể quản lý chứng chỉ ở bảng điều khiển
+ - Có thể authenticate database bằng IAM database authentication đối với 2 loại DB (Xác thực DB bằng chuỗi authen mà không cần mật khẩu, mỗi chuối này có lifetime = 15 minutes)
+   - RDS MySQL
+   - RDS PostGreSQL
 <hr/>
 
 ### Inspector
@@ -216,6 +224,9 @@
 ### Kinesis
  - Hỗ trợ việc thu thập, phân tích dữ liệu real-time
  - Xử lý dữ liệu ở bất kỳ quy mô nào
+ - Nếu muốn xử lý case đầu vào kinesis tăng 1 cách đột ngột thì có thể config retry (with exponential backoff) => điều này sẽ retry push data vào kinesis nếu bị lỗi
+ - Nếu lượng data đầu vào nhiều thì cần tăng số lượng shards, có thể hiểu mỗi shards như phân đoạn dữ liệu, càng nhiều shard càng chứa được nhiều data để xử lý
+   ![image](https://user-images.githubusercontent.com/57032236/183232267-35364256-6300-48ba-83a3-9cc79b066615.png)
  - Hỗ trợ thu thập dữ liệu như:
    - Âm thanh
    - Log
@@ -270,6 +281,7 @@
  - Lambda chỉ support image linux-based khi muốn chạy container
  - Muốn test container trên lambda có thể sử dụng Lambda Runtime Interface Emulator
  - Lambda chỉ sử dụng được image docker được lưu ở ECS trên cùng 1 account
+ - Limit số biến môi trường trong hàm lambda = 50, tổng size 50 biến đó không được vượt quá 4KB
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
@@ -310,6 +322,8 @@
      - Tăng độ sẵn sàng (các AZ độc lập về mặt vật lý -> nếu chẳng may có AZ lỗi thì vẫn có bản dự phòng)
      - Nâng cao độ bền (Sao chép đồng bộ giữa nhiều AZ -> luôn được cập nhật theo phiên bản chính)
      - Độ sẵn sàng cao (Chuyển đổi CSDL dự phòng nếu có vấn đề xảy ra trong vòng 60s mà không cần can thiệp thủ công)
+ - RDS hỗ trợ automatic backups, tuy nhiên thời gian lưu trữ chỉ từ 0 - 35 ngày, nếu cần lưu trữ lâu dài và lên lịch snapshot theo 1 thời gian biểu cố định thì có thể dùng cron job trong CloudWatch để lên job sử dụng lambda để thực hiện snapshot
+ - Automatic backup chỉ backup trên 1 AZ, không hỗ trợ backup trên nhiều vùng
 <hr/>
 
 ### Route 53
@@ -400,6 +414,12 @@
  - Sử dụng KMS để encrypt/decrypt
  - Có thể truy cập từ tài khoản AWS khác
 <hr/>
+ 
+ ### Step Functions
+ - Là dịch vụ để xây dựng work flow, bộ điều phối chức năng server less, định nghĩa các step cần làm gì khi success, khi failed
+ ![image](https://user-images.githubusercontent.com/57032236/183231878-c24a7454-7b4d-4b55-88a1-cbbf004b94b7.png)
+
+<hr/>
 
 ### X-Ray
 - Là service hỗ trợ theo dấu và cho ra cái nhìn tổng quát khi ứng dụng sử dụng micro service (Ví dụ như web sử dụng các micro services => X-Ray sẽ chạy qua các micro service và tổng hợp lại cho ra 1 sơ đồ, từ đó có cái nhìn tổng quan)
@@ -428,3 +448,4 @@
 ### NOTE SOMETHINGS
  - Khi muốn test command CLI mà không muốn ảnh hưởng resource thật => Sử dụng option --dry-run
  - Có thể tạo key_pair từ khóa private cá nhân (.pem) có sẵn
+ - NACL là state less, cần allow cả traffic in & traffic out
