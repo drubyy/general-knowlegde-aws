@@ -87,6 +87,13 @@
    - cloudtrail sẽ không ghi lại sự kiện 'CreateVolume' khi EBS được tạo trong quá trình launch EC2
 <hr/>
 
+### CloudWatch
+ - EC2 monitoring
+   + Default là 5 minutes
+   + Có thể setting detail monitoring => 1 minutes (thêm phí)
+   + Có thể dùng custom metric để put metric theo nhu cầu (VD: 1s, 5s, 10s,...)
+<hr/>
+
 ### CodeDeploy
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
@@ -197,6 +204,58 @@
  - Có thể hiểu EBS như 1 ổ đĩa thêm cho EC2
  - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
    - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
+ - EBS hỗ trợ cả encrypt on the fly & encrypt at rest
+<hr/>
+ 
+### ElasticCache
+ - Strategies
+   - Lazy: Chỉ cached khi cần thiết, data có thể bị cũ
+     ```
+     // *****************************************
+     // function that returns a customer's record.
+     // Attempts to retrieve the record from the cache.
+     // If it is retrieved, the record is returned to the application.
+     // If the record is not retrieved from the cache, it is
+     //    retrieved from the database, 
+     //    added to the cache, and 
+     //    returned to the application
+     // *****************************************
+     get_customer(customer_id)
+
+         customer_record = cache.get(customer_id)
+         if (customer_record == null)
+
+             customer_record = db.query("SELECT * FROM Customers WHERE id = {0}", customer_id)
+             cache.set(customer_id, customer_record)
+
+         return customer_record
+     ```
+   - Writethrough: Khi có sự kiện ghi, đồng thời ghi đè vào data cũ ở bộ nhớ đệm + update vào database => Dữ liệu luôn luôn mới nhất
+     ```
+     // *****************************************
+     // function that saves a customer's record.
+     // *****************************************
+     save_customer(customer_id, values)
+
+         customer_record = db.query("UPDATE Customers WHERE id = {0}", customer_id, values)
+         cache.set(customer_id, customer_record)
+    return success
+     ```
+   - TTL: set time to live cho cache
+     ```
+     // *****************************************
+     // function that saves a customer's record.
+     // The TTL value of 300 means that the record expires
+     //    300 seconds (5 minutes) after the set command 
+     //    and future reads will have to query the database.
+     // *****************************************
+     save_customer(customer_id, values)
+
+         customer_record = db.query("UPDATE Customers WHERE id = {0}", customer_id, values)
+         cache.set(customer_id, customer_record, 300)
+
+         return success
+     ```
 <hr/>
 
 ### IAM
@@ -281,7 +340,7 @@
  - Lambda chỉ support image linux-based khi muốn chạy container
  - Muốn test container trên lambda có thể sử dụng Lambda Runtime Interface Emulator
  - Lambda chỉ sử dụng được image docker được lưu ở ECS trên cùng 1 account
- - Limit số biến môi trường trong hàm lambda = 50, tổng size 50 biến đó không được vượt quá 4KB
+ - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
@@ -441,11 +500,4 @@
 
 <hr/><hr/>
 
-### Only root user (Những hành động mà chỉ có root user làm được)
- - Cặp khóa CloudFront
- <hr/>
- 
-### NOTE SOMETHINGS
- - Khi muốn test command CLI mà không muốn ảnh hưởng resource thật => Sử dụng option --dry-run
- - Có thể tạo key_pair từ khóa private cá nhân (.pem) có sẵn
- - NACL là state less, cần allow cả traffic in & traffic out
+### Only root user (Nh
