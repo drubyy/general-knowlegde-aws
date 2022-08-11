@@ -239,9 +239,8 @@
 
          customer_record = db.query("UPDATE Customers WHERE id = {0}", customer_id, values)
          cache.set(customer_id, customer_record)
-    return success
+     return success
      ```
- 
    - TTL: set time to live cho cache
      ```
      // *****************************************
