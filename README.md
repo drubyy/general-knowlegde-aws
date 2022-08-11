@@ -60,9 +60,22 @@
    - !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
    - !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
    - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key
+   - !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
+   - !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
+   - ...
  - #### Change sets & Drift detection
    - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
    - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn
+ - NOTE:
+   - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng cách zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
+     ```
+     MyFunction:
+     Type: AWS::Lambda::Function
+     Properties:
+       Code:
+         S3Bucket: !Sub 'lambda-zips-${AWS::Region}'
+       ...
+     ```
 <hr/>
 
 ### CloudFront
@@ -440,6 +453,7 @@
      - SSE-S3: Mã hóa và khóa được quản lý bởi S3, mỗi object được mã hóa bằng 1 khóa duy nhất, sau đó mã hóa khóa đó bằng 1 khóa gốc khác, sử dụng tiêu chuẩn AES-256
      - SSE-KMS: Mã hóa ở phía S3, tuy nghiên sử dụng khóa KMS do chúng ta quản lý
      - SSE-C: Vẫn là mã hóa phía server tuy nhiên key là do client gửi lên (PHẢI SỬ DỤNG HTTPS)
+ - S3 SELECT: hỗ trợ truy vấn select từ 1 tập objects, ví dụ có 1 list các file CSV, có thể chỉ định muốn lấy 3/10 columns trong list csv chỉ định đó
 <hr/>
 
 ### Serverless Application Model (SAM)
