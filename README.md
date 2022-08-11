@@ -513,6 +513,7 @@
    - and performance improvement (cải thiện hiệu suất).
 <hr/>
 
-<hr/><hr/>
-
-### Only root user (Nh
+### NOTE SOMETHINGS
+ - Có thể xem các thông tin của instance: subnet-id,...
+   => access url này http://169.254.169.254/latest/meta-data/instance-id
+<hr/>
