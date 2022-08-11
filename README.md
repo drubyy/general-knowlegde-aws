@@ -341,6 +341,7 @@
  - Muốn test container trên lambda có thể sử dụng Lambda Runtime Interface Emulator
  - Lambda chỉ sử dụng được image docker được lưu ở ECS trên cùng 1 account
  - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
+ - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được 
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
