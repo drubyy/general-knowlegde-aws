@@ -454,7 +454,7 @@
      - SSE-KMS: Mã hóa ở phía S3, tuy nghiên sử dụng khóa KMS do chúng ta quản lý
      - SSE-C: Vẫn là mã hóa phía server tuy nhiên key là do client gửi lên (PHẢI SỬ DỤNG HTTPS)
  - S3 SELECT: hỗ trợ truy vấn select từ 1 tập objects, ví dụ có 1 list các file CSV, có thể chỉ định muốn lấy 3/10 columns trong list csv chỉ định đó
- - Khi object cần upload S3 đạt đến mức 100MB thì AWS khuyến cáo nên sử dụng multi uploa
+ - Khi object cần upload S3 đạt đến mức 100MB thì AWS khuyến cáo nên sử dụng multi upload
 <hr/>
 
 ### Serverless Application Model (SAM)
