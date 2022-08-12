@@ -164,16 +164,16 @@
         - Để write 10 items/giây, mỗi item = 2KB => 10 * (2 / 1) = 20 => Cần 20 WCU/s
         - Để write 6 items/giây, mỗi item = 4.5KB => 6 * (5 / 1) = 30 => Cần 30 WCU/s
    - RCU:
-         - 1 RCU = 1 strongly consistent read (đối với mỗi item size = 4KB)
-         - 1 RCU = 2 eventually consistent read (đối với mỗi item size = 4KB)
-         VD:
-            - Để sử dụng 10 strongly consistent read / giây đối với mỗi item 4KB
-              => 10 * (4 / 4) = 10 RCU/s
-            - Để sử dụng 10 strongly consistent read / giây đối với mỗi item 6KB
-              => 10 * (8 / 4) = 20 RCU/s (Làm tròn size item lên, 4 = 4, 6 = 8, 9 = 12, 10 = 12)
-              
-            - Để sử dụng 16 eventually consistent read / giây đối với mỗi item 12KB
-              => (16 / 2) * (12 / 4) => 24 RCU/s
+     - 1 RCU = 1 strongly consistent read (đối với mỗi item size = 4KB)
+     - 1 RCU = 2 eventually consistent read (đối với mỗi item size = 4KB)
+     VD:
+        - Để sử dụng 10 strongly consistent read / giây đối với mỗi item 4KB
+          => 10 * (4 / 4) = 10 RCU/s
+        - Để sử dụng 10 strongly consistent read / giây đối với mỗi item 6KB
+          => 10 * (8 / 4) = 20 RCU/s (Làm tròn size item lên, 4 = 4, 6 = 8, 9 = 12, 10 = 12)
+
+        - Để sử dụng 16 eventually consistent read / giây đối với mỗi item 12KB
+          => (16 / 2) * (12 / 4) => 24 RCU/s
 <hr/>
 
 ### EC2
