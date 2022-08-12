@@ -201,6 +201,7 @@
  - Đặt config theo quy ước đặt tên: .ebextensions/<mysettings>.config
  - Nếu đặt các service trong ebextensions => khi deploy lại sẽ bị restart lại => data cũ sẽ không được giữ lại
    => Muốn giữ lại data cũ cần tách riêng service đó ra rồi tham chiếu vào Elastic Beanstalk
+   VD: Khi init RDS trong .ebextensions/ => khi deploy lại thì RDS cũng sẽ bị restart => để tránh trường hợp này thì nên tạo RDS riêng rồi ánh xạ host & port trong Beanstalk. Trong trường hợp init trong .ebextensions/ mà muốn giữ lại data cũ thì cần snapshot lại RDS
 <hr/>
 
 ### Elastic Container Registry (ECR)
@@ -298,6 +299,8 @@
  - Xử lý dữ liệu ở bất kỳ quy mô nào
  - Nếu muốn xử lý case đầu vào kinesis tăng 1 cách đột ngột thì có thể config retry (with exponential backoff) => điều này sẽ retry push data vào kinesis nếu bị lỗi
  - Nếu lượng data đầu vào nhiều thì cần tăng số lượng shards, có thể hiểu mỗi shards như phân đoạn dữ liệu, càng nhiều shard càng chứa được nhiều data để xử lý
+ - Mỗi 1 shard tương ứng tối đa 1 EC2 đóng vai trò làm worker
+ - Đối với các region US East (N. Virginia), US West (Oregon), and Europe (Ireland). Mỗi region tối đa 500 shards/account AWS, các region khác tối đa 200 shards/account AWS
    ![image](https://user-images.githubusercontent.com/57032236/183232267-35364256-6300-48ba-83a3-9cc79b066615.png)
  - Hỗ trợ thu thập dữ liệu như:
    - Âm thanh
@@ -354,7 +357,8 @@
  - Muốn test container trên lambda có thể sử dụng Lambda Runtime Interface Emulator
  - Lambda chỉ sử dụng được image docker được lưu ở ECS trên cùng 1 account
  - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
- - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được 
+ - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được
+ - Khi code hàm lambda sử dụng nodejs, cần cài các dependencies thì cần nén cả code và dependencies vào 1 folder
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
@@ -455,6 +459,10 @@
      - SSE-C: Vẫn là mã hóa phía server tuy nhiên key là do client gửi lên (PHẢI SỬ DỤNG HTTPS)
  - S3 SELECT: hỗ trợ truy vấn select từ 1 tập objects, ví dụ có 1 list các file CSV, có thể chỉ định muốn lấy 3/10 columns trong list csv chỉ định đó
  - Khi object cần upload S3 đạt đến mức 100MB thì AWS khuyến cáo nên sử dụng multi upload
+ - Versioning
+   - Khi versioning được bật, những object trước đó sẽ có version ID = null
+   - versioning được kích hoạt ở level bucket (all object in bucket), không thể chỉ áp dụng cho 1 số objects/folders chỉ định
+ - Để phân trang có thể sử dụng combo: --starting-token & --max-items
 <hr/>
 
 ### Serverless Application Model (SAM)
