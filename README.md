@@ -2,7 +2,7 @@
 
 ### Auto Scaling
  - Health check + thay thế các unhealth instances
- - Không tự động attach volumn nếu ổ đĩa sắp hết dung lượng
+ - Nếu EC2 sử dụng EBS, auto scaling sẽ không attach được volumn EBS nếu ổ đĩa sắp hết dung lượng
  - Không tính phí
  - Khi sử dụng chung với ELB, cần đổi health check type từ EC2 -> ELB nếu không sẽ không tự replace unhealth instances
  - Chỉ sử dụng trên 1 region (bao gồm tất cả AZ), không thể sử dụng đối với multi region
@@ -10,6 +10,9 @@
 
 ### API Gateway
  - Để custom response trả về => sử dụng API Gateway mapping templates
+ - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
+   ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
+
 <hr/>
 
 ### Budget
@@ -136,30 +139,50 @@
 
 ### DynamoDB
  - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
- - #### Eventually consistent
-   - Response có thể sẽ không phải data mới nhất, có thể hiểu rằng response sẽ là data tại lúc call, trong quá trình call, data có được thay đổi cũng sẽ không được trả về data mới nhất => nhanh hơn so với strongly consistent
- - #### Strongly consistent
-   - Trả về dữ liệu được cập nhật mới nhất, tuy nhiên sẽ đi kèm với 1 số nhược điểm:
-     - Có độ trễ cao hơn so với eventually consistent
-     - Không hỗ trợ đối với global secondary indexes (chỉ mục thứ cấp toàn cầu)
-     - Sử dụng nhiều read capacity hơn so với eventually consistent
+ - Eventually consistent VS Strongly consistent
+   - #### Eventually consistent (Đọc nhất quán cuối cùng)
+     - Response có thể sẽ không phải data mới nhất, có thể hiểu rằng response sẽ là data tại lúc call, trong quá trình call, data có được thay đổi cũng sẽ không được trả về data mới nhất => nhanh hơn so với strongly consistent
+   - #### Strongly consistent (Đọc nhất quán mạnh mẽ)
+     - Trả về dữ liệu được cập nhật mới nhất, tuy nhiên sẽ đi kèm với 1 số nhược điểm:
+       - Có độ trễ cao hơn so với eventually consistent
+       - Không hỗ trợ đối với global secondary indexes (chỉ mục thứ cấp toàn cầu)
+       - Sử dụng nhiều read capacity hơn so với eventually consistent
+     => Để improve performance đối với DynamoDB, luôn hướng tới sử dụng Eventually consistent bất cứ khi nào có thể
  - DynamoDB mặc định sử dụng Eventually consistent, trừ khi setting khác
  - Các câu lệnh GetItem, Query, Scan cho phép thêm option ConsistentRead = true để sử dụng Strongly Consistent trong quá trình thao tác.
  - #### Amazon DynamoDB Accelerator (DAX)
-   - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB
+   - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB => dùng để improve performance khi hệ thống NẶNG VỀ READ
    - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
    - Tính phí theo giờ và các instance DAX không cần cam kết dài hạn
  - #### request options:
    - ProjectionExpression: Sử dụng để filter attributes thay vì get all attributes
    - FilterExpression: Thêm điều kiện lọc records
+ - Cân nhắc sử dụng Global table để improve performance khi có user ở nhiều nơi trên khắp thế giới, có thể chỉ định region table DynamoDB khả dụng => giảm khoảng cách vật lý đối với client => giảm độ trễ
+ - WCU & RCU
+   - WCU: total_item * (item_size/1KB) = WCU
+     VD: + Để write 10 items/giây, mỗi item = 2KB => 10 * (2 / 1) = 20 => Cần 20 WCU/s
+         + Để write 6 items/giây, mỗi item = 4.5KB => 6 * (5 / 1) = 30 => Cần 30 WCU/s
+   - RCU:
+         - 1 RCU = 1 strongly consistent read (đối với mỗi item size = 4KB)
+         - 1 RCU = 2 eventually consistent read (đối với mỗi item size = 4KB)
+         VD:
+            + Để sử dụng 10 strongly consistent read / giây đối với mỗi item 4KB
+              => 10 * (4 / 4) = 10 RCU/s
+            + Để sử dụng 10 strongly consistent read / giây đối với mỗi item 6KB
+              => 10 * (8 / 4) = 20 RCU/s (Làm tròn size item lên, 4 = 4, 6 = 8, 9 = 12, 10 = 12)
+              
+            + Để sử dụng 16 eventually consistent read / giây đối với mỗi item 12KB
+              => (16 / 2) * (12 / 4) => 24 RCU/s
 <hr/>
 
 ### EC2
- - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
- - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
+ - Dedicated instance vs Dedicated host
+   - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
+   - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
  
- => Sự khác nhau giữa dedicated instance và dedicated host
- ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
+   => Sự khác nhau giữa dedicated instance và dedicated host
+   ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
+ - Có thể enable/disable DeleteOnTermination đối với EBS để quy định khi terminate instance có xoá ổ EBS hay không. Hành động này có thể thực hiện được kể cả khi EC2 running
  
 ### Elastic load balancer
  - Khi tạo load balancer => cần tạo target group => cần chỉ định target type => Khi tạo xong target group KHÔNG THỂ thay đổi target type
@@ -169,8 +192,9 @@
    - Lambda: Mục tiêu là 1 hàm lambda
  - Sử dụng header X-Forwarded-For để xem IP của client request nếu sử dụng load balancer
  - Error Code:
-   - 503: Báo chưa có target (chưa đăng ký mục tiêu)
-   - 504: Timeout
+   - 500: Lỗi server
+   - 503(Service unavailable): Báo chưa có target (target group chưa add target)
+   - 504: Timeout (không kết nối được với target khi hết thời gian timeout)
    - 403: bị chặn bởi AWS WAF
  - Khi ELB được tạo, nó sẽ nhận được tên DNS công khai, tên DNS này không thay đổi, nhưng public IP có thể thay đổi => nên sử dụng DNS thay vì public IP
  - Khi muốn phân tích về IP client request cũng như độ trễ request thì có thể sử dụng ALB access logs
@@ -219,6 +243,11 @@
  - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
    - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
  - EBS hỗ trợ cả encrypt on the fly & encrypt at rest
+<hr/>
+ 
+### EBS
+ - Là service lưu trữ dạng file (tệp)
+ - EFS Standard - IA: tự động tiết kiệm chi phí lưu trữ đối với các tệp ít được truy xuất
 <hr/>
  
 ### ElasticCache
@@ -359,6 +388,9 @@
  - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
  - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được
  - Khi code hàm lambda sử dụng nodejs, cần cài các dependencies thì cần nén cả code và dependencies vào 1 folder
+ - Giới hạn concurrency/AWS region là 1000 (của all lambda function chứ không phải của 1 function)
+   => vì thế có thể sẽ xảy ra trường hợp ví dụ như, có 3 function A, B, C. A và B sử dụng hết concurrency => khi C được gọi sẽ bị exception. Để giải quyết trường hợp này thì có thể set reserve concurrency (quy định số concurrency được sử dụng cho func), khi set như này thì sẽ không có func C sẽ không bị A và B chiếm concurrency.
+   => Hoặc nếu thực sự cần thiết thì có thể raise ticket AWS support để tăng hạn nghạch concurrency lên
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
@@ -463,6 +495,7 @@
    - Khi versioning được bật, những object trước đó sẽ có version ID = null
    - versioning được kích hoạt ở level bucket (all object in bucket), không thể chỉ áp dụng cho 1 số objects/folders chỉ định
  - Để phân trang có thể sử dụng combo: --starting-token & --max-items
+ - Khi vừa xoá bucket xong mà sử dụng lệnh get list buckets, bucket vừa bị xoá vẫn có thể xuất hiện trong list trong 1 thời gian nhất định
 <hr/>
 
 ### Serverless Application Model (SAM)
