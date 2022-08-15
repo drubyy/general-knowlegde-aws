@@ -246,7 +246,7 @@
  - EBS hỗ trợ cả encrypt on the fly & encrypt at rest
 <hr/>
  
-### ES
+### EFS
  - Là service lưu trữ dạng file (tệp)
  - EFS Standard - IA: tự động tiết kiệm chi phí lưu trữ đối với các tệp ít được truy xuất
 <hr/>
