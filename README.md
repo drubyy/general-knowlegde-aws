@@ -245,7 +245,7 @@
   - Test
   - Deploy
   - Approval
-  - 
+
 ![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
 <hr/>
 
