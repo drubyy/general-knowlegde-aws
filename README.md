@@ -110,6 +110,22 @@
    + Có thể dùng custom metric để put metric theo nhu cầu (VD: 1s, 5s, 10s,...)
 <hr/>
 
+### CodeBuild
+ - What: Code build được sử dụng với mục đích build, test version code nào đó
+ - Environment variables: Có 3 dạng
+   + Plain text: Dạng string thường
+   + SSM
+   + Secret manager
+ - Artifact: Là đầu ra của codebuild sau khi CodeBuild thực hiện build code => sẽ được lưu trữ ở đâu đó, vd như S3
+<hr/>
+
+### CodeCommit
+ - connect: Sử dụng https hoặc ssh
+   + Không thể sử dụng được ssh đối với root account
+   + Có thể sử dụng HTTPS đối với root account nhưng NOT RECOMMENDED
+   + Nên sử dụng IAM user để connect
+<hr/>
+
 ### CodeDeploy
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
