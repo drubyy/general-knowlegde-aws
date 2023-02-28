@@ -246,7 +246,9 @@
   - Deploy
   - Approval
   - Invoke
+- Mỗi stage sẽ tạo ra "artifacts", artifact đó sẽ được sử dụng cho stage tiếp theo
 
+![image](https://d2908q01vomqb2.cloudfront.net/7719a1c782a1ba91c031a682a0a2f8658209adbf/2018/05/24/Screen-Shot-2018-05-24-at-9.03.04-AM.png)
 
 ![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
 <hr/>
