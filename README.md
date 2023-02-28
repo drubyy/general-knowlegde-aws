@@ -129,6 +129,7 @@
 <hr/>
 
 ### CodeDeploy
+ #### Basic
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
  - Cần cài CodeDeploy Agent (Install docs: https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html)
@@ -137,7 +138,7 @@
    - ECS
    - Lambda
 
- - Các chiến lược deploy (deployment strategy)
+ #### Các chiến lược deploy (deployment strategy)
    - In-place deployment
      - Application trong nhóm target deploy sẽ bị dừng và deploy code, settings,... mới nhất rồi sau đó khởi động lại
      - Chỉ hoạt động đới với EC2 / On-premises
@@ -151,14 +152,12 @@
      - Ưu điểm:
        - Zero downtime
        - Dễ dàng rollback vì đã có sẵn môi trường blue
-
- - Deployment configuration
+ #### Deployment configuration
    - For EC2 / On-premise
      |Deployment configuration|Description|
      | ------------- | ------------- |
      |CodeDeployDefault.AllAtOnce|Thực hiện việc deploy cho tất cả instances cùng 1 lúc. Nếu ít nhất 1 instance deploy thành công => Trạng thái tổng thể của deployment đó sẽ hiển thị là <b>SUCCESS</b>, Nếu không có bất cứ 1 instance nào deploy thành công => Trạng thái tổng thể sẽ là <b>FAILURE</b>. Ví dụ có 9 instances, deploy 1 cái thành công, 8 cái thất bại => trạng thái tổng thể là |
-
- - Lifecycle Event
+ #### Lifecycle Event
    - Hooks
    ![image](https://user-images.githubusercontent.com/57032236/183232015-edf2a8ba-0642-4e7b-8ee2-7df9945ee86e.png)
    - Environment Variable Avaibility for Hooks
@@ -174,14 +173,14 @@
        - BUNDLE_ETAG
      - For case bundle from Amazon S3
        - BUNDLE_COMMIT
- 
+ #### Trigger, log, event
  - Có thế kết hợp với AWS CloudWatch (setting trong AWS CloudWatch) để thông báo khi deployment chuyển state (failure, success,...), 1 số usecase như:
    - Gửi message slack thông báo trạng thái deployment
    - call lambda function làm gì đó
    - Kết hợp với AWS CloudWatch alarm để tự động hóa tắt, khởi động,... lại instances
  - Có thể ghi log vào CloudWatch log bằng cách cài CloudWatch Logs agent cho instances EC2, không thể ghi log deployment trực tiếp vào CloudWatch log nếu không sử dụng agent
  - Có thể sử dụng deployment trigger để trigger đến AWS SNS (setting ngay trong codedeploy)
- - Rollback
+ #### Rollback
    - Có 2 loại rollback là: Manual Rollbacks và Automatic Rollbacks
      - Manual Rollbacks (Khi checked "Disable rollbacks" trong mục "Rollbacks" trong deployment group)
      - Automatic Rollbacks (Khi không check "Disable rollbacks" trong mục "Rollbacks" trong deployment group), có thể chọn 1 trong 2 option hoặc cả 2
@@ -192,8 +191,7 @@
        - Khi rollback sẽ rollback về revision gần nhất mà có trạng thái là SUCCESS
          revision_1 (SUCCESS) -> revision_2 (FAILURE) -> revision_3 (FAILURE) -> current_revision
          => Khi rollback sẽ rollback về revision_1
-
- - Use CodeDeploy with On-Premises instances
+ #### Use CodeDeploy with On-Premises instances
    - Step 1: Config và đăng ký các instances đó với CodeDeploy
      - Để đăng ký instances với CodeDeploy có 2 cách
        - Cách 1: Sử dụng ARN của IAM user (Not recommended)
