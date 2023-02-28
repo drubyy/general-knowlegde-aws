@@ -237,6 +237,11 @@
 - Sử dụng local build bằng CodeBuild Agent để: test, debug
 <hr/>
 
+### CodePipeline
+- Là một service CI/CD
+![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
+<hr/>
+
 ### DynamoDB
  - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
  - Eventually consistent VS Strongly consistent
