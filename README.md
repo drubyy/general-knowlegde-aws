@@ -112,6 +112,8 @@
 
 ### CodeBuild
  - What: Code build được sử dụng với mục đích build, test version code nào đó
+ - Có thể sử dụng GitHub, GitHub Enterprise, BitBucket, AWS CodeCommit hoặc Amazon S3 để làm source
+ - Có thể sử lý đồng thời nhiều bản build
  - Environment variables: Có 3 dạng
    + Plain text: Dạng string thường
    + SSM
@@ -129,11 +131,13 @@
 ### CodeDeploy
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
+ - Cần cài CodeDeploy Agent (Install docs: https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html)
+ - Có thể sử dụng được đối với On-Premises instances
  - Các kiểu deploy
    - In-place deployment
      - Application trong nhóm target deploy sẽ bị dừng và deploy code, settings,... mới nhất rồi sau đó khởi động lại
      - Chỉ hoạt động đới với EC2 / On-premises
-   - Blue-Green deployment: Giải quyết vấn đề downtime, mục đích và ý tưởng là sử dụng 2 tài nguyên phần cứng song song giống hệt nhau để tạo ra 2 môi trường production (blue và green).
+   - Blue-Green deployment: Giải quyết vấn đề downtime, mục đích và ý tưởng là sử dụng 2 tài nguyên phần cứng song song giống hệt nhau để tạo ra 2 môi trường etc staging, production,... (blue và green).
      - VD
        - User đang sử dụng version code 1 (Blue)
        - Version mới được deploy lên môi trường giống hệt blue => môi trường green
@@ -143,8 +147,46 @@
      - Ưu điểm:
        - Zero downtime
        - Dễ dàng rollback vì đã có sẵn môi trường blue
- - Lifecycle Event Hook
+ - Lifecycle Event
+   - Hooks
    ![image](https://user-images.githubusercontent.com/57032236/183232015-edf2a8ba-0642-4e7b-8ee2-7df9945ee86e.png)
+   - Environment Variable Avaibility for Hooks
+     - APPLICATION_NAME
+     - DEPLOYMENT_ID
+     - DEPLOYMENT_GROUP_NAME
+     - DEPLOYMENT_GROUP_ID
+     - LIFECYCLE_EVENT
+     - For case bundle from Amazon S3
+       - BUNDLE_BUCKET
+       - BUNDLE_KEY
+       - BUNDLE_VERSION
+       - BUNDLE_ETAG
+     - For case bundle from Amazon S3
+       - BUNDLE_COMMIT
+ - Có thế kết hợp với AWS CloudWatch (setting trong AWS CloudWatch) để thông báo khi deployment chuyển state (failure, success,...), 1 số usecase như:
+   - Gửi message slack thông báo trạng thái deployment
+   - call lambda function làm gì đó
+   - Kết hợp với AWS CloudWatch alarm để tự động hóa tắt, khởi động,... lại instances
+ - Có thể ghi log vào CloudWatch log bằng cách cài CloudWatch Logs agent cho instances EC2, không thể ghi log deployment trực tiếp vào CloudWatch log nếu không sử dụng agent
+ - Có thể sử dụng deployment trigger để trigger đến AWS SNS (setting ngay trong codedeploy)
+ - Rollback
+   - Có 2 loại rollback là: Manual Rollbacks và Automatic Rollbacks
+     - Manual Rollbacks (Khi checked "Disable rollbacks" trong mục "Rollbacks" trong deployment group)
+     - Automatic Rollbacks (Khi không check "Disable rollbacks" trong mục "Rollbacks" trong deployment group), có thể chọn 1 trong 2 option hoặc cả 2
+       - "Roll back when a deployment fails" => Khi deploy chuyển state sang failure => rollback
+       - "Roll back when alarm thresholds are met" => Khi thỏa mãn điều kiện alarm => rollback
+          - VD: Khi deploy nếu CPU tăng quá 80% và mong muốn rollback => setting alarm => rollback khi thỏa mãn điều kiện CPU > 80%
+          - Alarm được chọn ngay trong deployment group (nhưng tạo alarm thì cần tạo ở CloudWatch Alarm)
+ - Use CodeDeploy with On-Premises instances
+   - Step 1: Config và đăng ký các instances đó với CodeDeploy
+     - Để đăng ký instances với CodeDeploy có 2 cách
+       - Cách 1: Sử dụng ARN của IAM user (Not recommended)
+         - Sử dụng AWS CLI chạy lệnh [register](https://docs.aws.amazon.com/cli/latest/reference/deploy/register.html), chỉ nên sử dụng lệnh này đối với môi trường không phải production vì kém bảo mật do sử dụng credentials tĩnh vĩnh viễn
+         - Sử dụng AWS CLI chạy lệnh [register-on-premises-instance](https://docs.aws.amazon.com/cli/latest/reference/deploy/register-on-premises-instance.html), do là đăng ký thủ công nên sẽ thích hợp với trường hợp số lượng ít instances
+       - Cách 2: Sử dụng ARN của IAM role
+         - Sử dụng AWS CLI chạy lệnh [register-on-premises-instance](https://docs.aws.amazon.com/cli/latest/reference/deploy/register-on-premises-instance.html) và sử dụng credentials tạm thời để xác thực bằng AWS Security Token Service (AWS STS). Cách này mức bảo mật cao nhất vì chỉ sử dụng credentials tạm thời, khi hết hạn sẽ cần làm mới => Thích hợp với production ở mọi cấp độ
+   - Step 2: Deploy
+   * DOCS: https://docs.aws.amazon.com/codedeploy/latest/userguide/on-premises-instances-register.html
 <hr/>
 
 ### CodeBuild
