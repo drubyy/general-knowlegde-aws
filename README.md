@@ -155,6 +155,7 @@
  - Deployment configuration
    - For EC2 / On-premise
      |Deployment configuration|Description|
+     | ------------- | ------------- |
      |CodeDeployDefault.AllAtOnce|Thực hiện việc deploy cho tất cả instances cùng 1 lúc. Nếu ít nhất 1 instance deploy thành công => Trạng thái tổng thể của deployment đó sẽ hiển thị là <b>SUCCESS</b>, Nếu không có bất cứ 1 instance nào deploy thành công => Trạng thái tổng thể sẽ là <b>FAILURE</b>. Ví dụ có 9 instances, deploy 1 cái thành công, 8 cái thất bại => trạng thái tổng thể là |
 
  - Lifecycle Event
