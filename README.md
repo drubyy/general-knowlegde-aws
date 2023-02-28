@@ -158,7 +158,7 @@
      | ------------- | ------------- |
      |CodeDeployDefault.AllAtOnce|Thực hiện việc deploy cho tất cả instances cùng 1 lúc. Nếu ít nhất 1 instance deploy thành công => Trạng thái tổng thể của deployment đó sẽ hiển thị là <b>SUCCESS</b>, Nếu không có bất cứ 1 instance nào deploy thành công => Trạng thái tổng thể sẽ là <b>FAILURE</b>. Ví dụ có 9 instances, deploy 1 cái thành công, 8 cái thất bại => trạng thái tổng thể là |
    - For ECS
-     Khi thực hiện deploy đối với ECS, deployment configuration sẽ quyết định việc chuyển traffic từ version cũ sang version mới như thế nào. Có 3 kiểu là: canary, linear và all-at-once. Đối với canary và linear có thể tạo custom configuration
+     - Khi thực hiện deploy đối với ECS, deployment configuration sẽ quyết định việc chuyển traffic từ version cũ sang version mới như thế nào. Có 3 kiểu là: canary, linear và all-at-once. Đối với canary và linear có thể tạo custom configuration
      |Deployment configuration|Description|
      | ------------- | ------------- |
      |CodeDeployDefault.ECSLinear10PercentEvery1Minutes|Chuyển 10% traffic mỗi 1 phút cho đến khi chuyển toàn bộ traffic sang version mới|
@@ -167,9 +167,9 @@
      |CodeDeployDefault.ECSCanary10Percent15Minutes|Chuyển 10% traffic lần đầu tiên, sau 15 phút sẽ chuyển nốt 90% traffic còn lại|
      |CodeDeployDefault.ECSAllAtOnce|Chuyển toàn bộ traffic 1 lúc|
    - For ECS (deploy thông qua CloudFormation blue/green strategy)
-     Tương tự như ECS thường nhưng KHÔNG tạo được custom configuration
+     - Tương tự như ECS thường nhưng KHÔNG tạo được custom configuration
    - For Lambda
-     Khi thực hiện deploy đối với Lambda, deployment configuration sẽ quyết định việc chuyển traffic từ function lambda version cũ sang version mới như thế nào. Có 3 kiểu là: canary, linear và all-at-once. Đối với canary và linear có thể tạo custom configuration
+     - Khi thực hiện deploy đối với Lambda, deployment configuration sẽ quyết định việc chuyển traffic từ function lambda version cũ sang version mới như thế nào. Có 3 kiểu là: canary, linear và all-at-once. Đối với canary và linear có thể tạo custom configuration
      |Deployment configuration|Description|
      | ------------- | ------------- |
      |CodeDeployDefault.LambdaCanary10Percent5Minutes|Chuyển 10% traffic lần đầu tiên, sau 5 phút sẽ chuyển nốt 90% còn lại|
