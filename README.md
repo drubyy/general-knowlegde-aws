@@ -132,8 +132,12 @@
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
  - Cần cài CodeDeploy Agent (Install docs: https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html)
- - Có thể sử dụng được đối với On-Premises instances
- - Các kiểu deploy
+ - Hỗ trợ deploy đối với
+   - EC2 / On-premises
+   - ECS
+   - Lambda
+
+ - Các chiến lược deploy (deployment strategy)
    - In-place deployment
      - Application trong nhóm target deploy sẽ bị dừng và deploy code, settings,... mới nhất rồi sau đó khởi động lại
      - Chỉ hoạt động đới với EC2 / On-premises
@@ -147,6 +151,12 @@
      - Ưu điểm:
        - Zero downtime
        - Dễ dàng rollback vì đã có sẵn môi trường blue
+
+ - Deployment configuration
+   - For EC2 / On-premise
+     |Deployment configuration|Description|
+     |CodeDeployDefault.AllAtOnce|Thực hiện việc deploy cho tất cả instances cùng 1 lúc. Nếu ít nhất 1 instance deploy thành công => Trạng thái tổng thể của deployment đó sẽ hiển thị là <b>SUCCESS</b>, Nếu không có bất cứ 1 instance nào deploy thành công => Trạng thái tổng thể sẽ là <b>FAILURE</b>. Ví dụ có 9 instances, deploy 1 cái thành công, 8 cái thất bại => trạng thái tổng thể là |
+
  - Lifecycle Event
    - Hooks
    ![image](https://user-images.githubusercontent.com/57032236/183232015-edf2a8ba-0642-4e7b-8ee2-7df9945ee86e.png)
@@ -163,6 +173,7 @@
        - BUNDLE_ETAG
      - For case bundle from Amazon S3
        - BUNDLE_COMMIT
+ 
  - Có thế kết hợp với AWS CloudWatch (setting trong AWS CloudWatch) để thông báo khi deployment chuyển state (failure, success,...), 1 số usecase như:
    - Gửi message slack thông báo trạng thái deployment
    - call lambda function làm gì đó
@@ -177,6 +188,10 @@
        - "Roll back when alarm thresholds are met" => Khi thỏa mãn điều kiện alarm => rollback
           - VD: Khi deploy nếu CPU tăng quá 80% và mong muốn rollback => setting alarm => rollback khi thỏa mãn điều kiện CPU > 80%
           - Alarm được chọn ngay trong deployment group (nhưng tạo alarm thì cần tạo ở CloudWatch Alarm)
+       - Khi rollback sẽ rollback về revision gần nhất mà có trạng thái là SUCCESS
+         revision_1 (SUCCESS) -> revision_2 (FAILURE) -> revision_3 (FAILURE) -> current_revision
+         => Khi rollback sẽ rollback về revision_1
+
  - Use CodeDeploy with On-Premises instances
    - Step 1: Config và đăng ký các instances đó với CodeDeploy
      - Để đăng ký instances với CodeDeploy có 2 cách
