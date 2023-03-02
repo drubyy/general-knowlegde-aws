@@ -242,17 +242,19 @@
 
 ![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
 
-- CodePipeline bao gồm các action
-  - Code
-  - Build
-  - Test
-  - Deploy
-  - Approval
-  - Invoke
 - Mỗi stage sẽ tạo ra "artifacts", artifact đó sẽ được sử dụng cho stage tiếp theo
-- Có 2 loại cách hoạt động của action:
-  - Sequential (Chạy tuần tự): Xong action trên mới chạy action dưới
-  - Parallel (Song song): Các action ngang hàng nhau => Chạy song song không đồng bộ
+- Actions
+  - CodePipeline bao gồm các action
+   - Code
+   - Build
+   - Test
+   - Deploy
+   - Approval
+   - Invoke
+  - Có 2 cách thực thi của action:
+    - Sequential (Chạy tuần tự): Xong action trên mới chạy action dưới
+    - Parallel (Song song): Các action ngang hàng nhau => Chạy song song không đồng bộ
+  - Thứ tự chạy, cách thực thi là song song hay tuần tự sẽ được quyết định bơi runOrder, thứ tự cao sẽ chạy sau thứ tự trước, thứ tự bằng nhau sẽ chạy song song. VD: 1 -> 2 && 2 -> 3
  
   <img width="1109" alt="Screen Shot 2023-03-02 at 22 28 51" src="https://user-images.githubusercontent.com/57032236/222473874-de8caaad-e926-46a6-8370-927d98032bbc.png">
   => Deploy và uploadToS3 là action parallel
