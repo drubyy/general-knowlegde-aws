@@ -238,7 +238,7 @@
 <hr/>
 
 ### CodePipeline
-- Là một service CI/CD, hiểu nôm na là kết hợp giữa source code (AWS CodeCommit, Github,...), CI (AWS CodeBuild, jenkins,...), CD (AWS CodeDeploy,...) giúp tạo nên 1 luồng hoàn chỉnh để tạo nên 1 hệ thống CI/CD
+- Là một service CI/CD, hiểu nôm na là kết hợp giữa source code (AWS CodeCommit, Github,...), CI (AWS CodeBuild, jenkins,...), CD (AWS CodeDeploy,...) giúp tạo nên 1 luồng hoàn chỉnh để tạo nên 1 hệ thống CI/CD. Cụ thể hơn thì CodePipeline là tập hợp các stage (các stage này có thể custom, tuỳ biến theo nhu cầu), mỗi stage là 1 tập hợp các action mong 
 
 ![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
 
