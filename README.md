@@ -250,6 +250,15 @@
   - Approval
   - Invoke
 - Mỗi stage sẽ tạo ra "artifacts", artifact đó sẽ được sử dụng cho stage tiếp theo
+- Có 2 loại cách hoạt động của action:
+  - Sequential (Chạy tuần tự): Xong action trên mới chạy action dưới
+  - Parallel (Song song): Các action ngang hàng nhau => Chạy song song không đồng bộ
+ 
+  <img width="1109" alt="Screen Shot 2023-03-02 at 22 28 51" src="https://user-images.githubusercontent.com/57032236/222473874-de8caaad-e926-46a6-8370-927d98032bbc.png">
+  => Deploy và uploadToS3 là action parallel
+  
+  <img width="1109" alt="Screen Shot 2023-03-02 at 22 32 36" src="https://user-images.githubusercontent.com/57032236/222474317-c22f206d-61ba-456c-850d-acebb45d8dbc.png">
+  => Manual approve phải success thì action DeployToProduction mới được phép thực 
 
 ![image](https://d2908q01vomqb2.cloudfront.net/7719a1c782a1ba91c031a682a0a2f8658209adbf/2018/05/24/Screen-Shot-2018-05-24-at-9.03.04-AM.png)
 <hr/>
