@@ -71,11 +71,91 @@
  - Sử dụng output Export xuất giá trị đầu ra để có thể tái sử dụng ở 1 stack khác
  - Function:
    - !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
+     ```
+     Resources:
+      myELB:
+        Type: AWS::ElasticLoadBalancing::LoadBalancer
+        Properties:
+          AvailabilityZones:
+            - eu-west-1a
+          Listeners:
+            - LoadBalancerPort: '80'
+              InstancePort: '80'
+              Protocol: HTTP
+      myELBIngressGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+          GroupDescription: ELB ingress group
+          SecurityGroupIngress:
+            - IpProtocol: tcp
+              FromPort: 80
+              ToPort: 80
+              SourceSecurityGroupOwnerId: !GetAtt myELB.SourceSecurityGroup.OwnerAlias
+              SourceSecurityGroupName: !GetAtt myELB.SourceSecurityGroup.GroupName
+     ```
    - !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
+     ```
+     Name: !Sub 
+      - 'www.${Domain}'
+      - Domain: !Ref RootDomainName
+     ```
    - !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
-   - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key
+     - Sử dụng với parameters => Trả về gía trị của parameter
+     - Sử dụng với resouces => Trả về physical ID của resouce tương ứng
+     ```
+     Resources:
+      MyInstance:
+        Type: AWS::EC2::Instance
+        Properties:
+          AvailabilityZone: us-east-1a
+          ImageId: ami-009d6802948d06e52
+          InstanceType: t2.micro
+          SecurityGroups:
+            - !Ref SSHSecurityGroup
+            - !Ref ServerSecurityGroup
+     ```
+   - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key (mapping là tập hợp các biến tĩnh trong template)
+     ```
+     Mappings: 
+      RegionMap: 
+        us-east-1: 
+          HVM64: "ami-0ff8a91507f77f867"
+          HVMG2: "ami-0a584ac55a7631c0c"
+        us-west-1: 
+          HVM64: "ami-0bdb828fd58c52235"
+          HVMG2: "ami-066ee5fd4a9ef77f1"
+     Resources: 
+      myEC2Instance: 
+        Type: "AWS::EC2::Instance"
+        Properties: 
+          ImageId: !FindInMap
+            - RegionMap
+            - !Ref 'AWS::Region'
+            - HVM64
+          InstanceType: m1.small
+     ```
    - !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
+     ```
+     Resources:
+      myBucketResource:
+        Type: AWS::S3::Bucket
+
+      LambdaUsedToCleanUp:
+        Type: Custom::cleanupbucket
+        Properties:
+          ServiceToken: !ImportValue EmptyS3BucketLambda
+          BucketName: !Ref myBucketResource
+     ```
    - !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
+     ```
+     !Join [ ":", [ a, b, c ] ]
+     ```
+   - Conditions:
+     - !Equals/Fn::Equals
+     - !And/Fn::And
+     - !If/Fn::If
+     - !Not/Fn::Not
+     - !Or/Fn::Or
    - ...
  - #### Change sets & Drift detection
    - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
