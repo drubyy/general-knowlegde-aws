@@ -15,6 +15,8 @@
       => Sau đó đưa số lượng instances về lại 4 => Auto Scaling thực hiện scaling in => ưu tiên remove 4 instances cũ nhất => launch configuration sẽ mới nhất
    
    <img width="640" alt="Screen Shot 2023-03-05 at 11 05 10" src="https://user-images.githubusercontent.com/57032236/222941094-59da70d8-11eb-48a1-969f-df4310d7b791.png">
+   
+   <img width="645" alt="Screen Shot 2023-03-05 at 11 14 22" src="https://user-images.githubusercontent.com/57032236/222941340-feaa7424-4d74-4e7e-956c-dd7a4922a1b9.png">
 <hr/>
 
 ### API Gateway
