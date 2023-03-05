@@ -6,6 +6,8 @@
  - Không tính phí
  - Khi sử dụng chung với ELB, cần đổi health check type từ EC2 -> ELB nếu không sẽ không tự replace unhealth instances
  - Chỉ sử dụng trên 1 region (bao gồm tất cả AZ), không thể sử dụng đối với multi region
+ - Khi update launch configuration => config mới sẽ chỉ áp dụng cho instances được tạo mới sau đó => instances cũ sẽ không được áp dụng
+ - Khi scaling in (giảm size) sẽ ưu tiên terminate những instances có launch configuration sớm nhất
 <hr/>
 
 ### API Gateway
