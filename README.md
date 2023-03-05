@@ -192,6 +192,7 @@
    - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn
  - NOTE:
    - Khi update stack không thể thay đổi tên stack
+   - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
    - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng cách zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
      ```
      MyFunction:
@@ -299,11 +300,12 @@
           Count: 1
       Type: AWS::CloudFormation::WaitCondition
       
-      // Có thể thấy rằng EC2 chạy script UserData => chạy cfn-init => Chờ 1 instance EC2 trong vòng 2 phút (PT2M) thông báo tín hiệu tốt để tiếp tục tạo stack. Chỉ khi có signal tốt thì stack mới tiếp tục việc tạo còn không thì sẽ có trạng thái failure
+      // Có thể thấy rằng EC2 chạy script UserData => chạy cfn-init => Chờ 1 instance EC2 trong vòng 2 phút (PT2M) thông báo tín hiệu tốt để tiếp tục tạo stack. Chỉ khi có signal tốt thì stack mới tiếp tục việc tạo còn không thì sẽ có trạng thái failure. Nhưng quan trọng là sẽ chỉ có ý nghĩa nếu đi kèm config enable rollback on failure => Có thể tưởng tượng rollback on failure giống như transaction => raise error thì sẽ rollback tất, còn nếu disable rollback on failure thì sẽ không rollback gì
       
       // Wait condition có thể sẽ không nhận được tín hiệu từ EC2 instance nên cần đảm bảo các điều kiện sau:
       // - Đảm bảo rằng AMI EC2 đang sử dụng đã được cài CloudFormation helper scripts, nếu chưa cài thì cần download
       // - Đảm bảo rằng câu lệnh cfn-init & cfn-signal thành công, nếu có lỗi thì có thể debug bằng cách xem log /var/log/cloud-init.log hoặc /var/log/cfn-init.log. Nhưng muốn giữ lại log và xem log để debug thì cần lưu ý rằng disabled rollback on failure nếu không thì CloudFormation sẽ xoá instance đó khi stack create fail
+      // Điều quan trọng nữa là cần đảm bảo instance có kết nối internet. Nếu instance nằm trong private subnet thì cần sử dụng NAT gateway, nếu public thì có thể sử dụng luôn Internet gateway
    ```
 <hr/>
 
