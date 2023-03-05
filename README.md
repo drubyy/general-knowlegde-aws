@@ -149,6 +149,8 @@
    - !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
      ```
      !Join [ ":", [ a, b, c ] ]
+     
+     => This will return "a:b:c"
      ```
    - Conditions:
      - !Equals/Fn::Equals
