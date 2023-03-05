@@ -98,6 +98,11 @@
      Name: !Sub 
       - 'www.${Domain}'
       - Domain: !Ref RootDomainName
+
+
+     // OR this
+     
+     Name: Fn::Sub: "Hello ${AWS::Region}"
      ```
    - !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
      - Sử dụng với parameters => Trả về gía trị của parameter
@@ -150,7 +155,7 @@
      ```
      !Join [ ":", [ a, b, c ] ]
      
-     => This will return "a:b:c"
+     // This will return "a:b:c"
      ```
    - Conditions:
      - !Equals/Fn::Equals
