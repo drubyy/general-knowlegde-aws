@@ -243,6 +243,67 @@
                 httpd:
                   enabled: 'true'
                   ensureRunning: 'true'
+                  
+   // Cần lưu ý rằng các câu lệnh UserData sẽ không ghi log theo như cách sử dụng trực tiếp UserData bằng hàm Fn::Base64 như ví dụ trên => xem log /var/log/cloud-init-output.log sẽ không ghi log các câu lệnh đó => Để xem log cfn-init thì sẽ xem ở /var/log/cfn-init.log (Tổng quan) hoặc /var/log/cfn-init-cmd.log (Chi tiết)
+   ```
+   
+   - cfn-signal: Sử dụng để thông báo tín hiệu dạng như waitting condition
+   ```
+   Resources:
+    MyInstance:
+      Type: AWS::EC2::Instance
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-009d6802948d06e52
+        InstanceType: t2.micro
+        KeyName: !Ref SSHKey
+        SecurityGroups:
+          - !Ref SSHSecurityGroup
+        # we install our web server with user data
+        UserData: 
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash -xe
+              # Get the latest CloudFormation package
+              yum update -y aws-cfn-bootstrap
+              # Start cfn-init
+              /opt/aws/bin/cfn-init -s ${AWS::StackId} -r MyInstance --region ${AWS::Region}
+              # Start cfn-signal to the wait condition
+              /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource SampleWaitCondition --region ${AWS::Region}
+      Metadata:
+        Comment: Install a simple Apache HTTP page
+        AWS::CloudFormation::Init:
+          config:
+            packages:
+              yum:
+                httpd: []
+            files:
+              "/var/www/html/index.html":
+                content: |
+                  <h1>Hello World from EC2 instance!</h1>
+                  <p>This was created using cfn-init</p>
+                mode: '000644'
+            commands:
+              hello:
+                command: "echo 'hello world'"
+            services:
+              sysvinit:
+                httpd:
+                  enabled: 'true'
+                  ensureRunning: 'true'
+
+    SampleWaitCondition:
+      CreationPolicy:
+        ResourceSignal:
+          Timeout: PT2M
+          Count: 1
+      Type: AWS::CloudFormation::WaitCondition
+      
+      // Có thể thấy rằng EC2 chạy script UserData => chạy cfn-init => Chờ 1 instance EC2 trong vòng 2 phút (PT2M) thông báo tín hiệu tốt để tiếp tục tạo stack. Chỉ khi có signal tốt thì stack mới tiếp tục việc tạo còn không thì sẽ có trạng thái failure
+      
+      // Wait condition có thể sẽ không nhận được tín hiệu từ EC2 instance nên cần đảm bảo các điều kiện sau:
+      // - Đảm bảo rằng AMI EC2 đang sử dụng đã được cài CloudFormation helper scripts, nếu chưa cài thì cần download
+      // - Đảm bảo rằng câu lệnh cfn-init & cfn-signal thành công, nếu có lỗi thì có thể debug bằng cách xem log /var/log/cloud-init.log hoặc /var/log/cfn-init.log. Nhưng muốn giữ lại log và xem log để debug thì cần lưu ý rằng disabled rollback on failure nếu không thì CloudFormation sẽ xoá instance đó khi stack create fail
    ```
 <hr/>
 
