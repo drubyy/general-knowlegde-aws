@@ -157,6 +157,29 @@
      
      // This will return "a:b:c"
      ```
+   - !Base64/Fn::Base64 => trả về biểu diễn Base64 của chuỗi đầu vào. Hàm này thường được sử dụng để truyền dữ liệu đã mã hóa sang các phiên bản Amazon EC2 bằng thuộc tính UserData.
+     ```
+     Resources:
+      MyInstance:
+        Type: AWS::EC2::Instance
+        Properties:
+          AvailabilityZone: us-east-1a
+          ImageId: ami-009d6802948d06e52
+          InstanceType: t2.micro
+          KeyName: !Ref SSHKey
+          SecurityGroups:
+            - !Ref SSHSecurityGroup
+          # we install our web server with user data
+          UserData: 
+            Fn::Base64: |
+              #!/bin/bash -xe
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              echo "Hello World from user data" > /var/www/html/index.html
+     ```
+     NOTE good to know: UserData log sẽ được ghi vào /var/log/cloud-init-output.log
    - Conditions:
      - !Equals/Fn::Equals
      - !And/Fn::And
@@ -178,6 +201,49 @@
          S3Bucket: !Sub 'lambda-zips-${AWS::Region}'
        ...
      ```
+   - Có thể sử dụn cfn-init để thiết lập UserData theo một cách khác, ý tưởng là đưa các câu lệnh UserData vào meta-data của resouce => UserData sẽ tham chiếu đến đó
+   ```
+   Resources:
+    MyInstance:
+      Type: AWS::EC2::Instance
+      Properties:
+        AvailabilityZone: us-east-1a
+        ImageId: ami-009d6802948d06e52
+        InstanceType: t2.micro
+        KeyName: !Ref SSHKey
+        SecurityGroups:
+          - !Ref SSHSecurityGroup
+        # we install our web server with user data
+        UserData: 
+          Fn::Base64:
+            !Sub |
+              #!/bin/bash -xe
+              # Get the latest CloudFormation package
+              yum update -y aws-cfn-bootstrap
+              # Start cfn-init
+              /opt/aws/bin/cfn-init -s ${AWS::StackId} -r MyInstance --region ${AWS::Region} || error_exit 'Failed to run cfn-init'
+      Metadata:
+        Comment: Install a simple Apache HTTP page
+        AWS::CloudFormation::Init:
+          config:
+            packages:
+              yum:
+                httpd: []
+            files:
+              "/var/www/html/index.html":
+                content: |
+                  <h1>Hello World from EC2 instance!</h1>
+                  <p>This was created using cfn-init</p>
+                mode: '000644'
+            commands:
+              hello:
+                command: "echo 'hello world'"
+            services:
+              sysvinit:
+                httpd:
+                  enabled: 'true'
+                  ensureRunning: 'true'
+   ```
 <hr/>
 
 ### CloudFront
