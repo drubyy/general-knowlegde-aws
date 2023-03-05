@@ -1,6 +1,7 @@
 # General note knowlegde
 
 ### Auto Scaling
+ - AWS Auto Scaling giám sát các ứng dụng và tự động điều chỉnh số lượng instances để duy trì hiệu năng ổn định, tối ưu hoá chi phí vì sẽ chỉ trả phí theo on-demand
  - Health check + thay thế các unhealth instances
  - Nếu EC2 sử dụng EBS, auto scaling sẽ không attach được volumn EBS nếu ổ đĩa sắp hết dung lượng
  - Không tính phí
