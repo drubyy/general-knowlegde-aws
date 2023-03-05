@@ -1,4 +1,4 @@
-# note-aws-developer-associate-level
+# General note knowlegde
 
 ### Auto Scaling
  - Health check + thay thế các unhealth instances
