@@ -7,8 +7,14 @@
  - Không tính phí
  - Khi sử dụng chung với ELB, cần đổi health check type từ EC2 -> ELB nếu không sẽ không tự replace unhealth instances
  - Chỉ sử dụng trên 1 region (bao gồm tất cả AZ), không thể sử dụng đối với multi region
- - Khi update launch configuration => config mới sẽ chỉ áp dụng cho instances được tạo mới sau đó => instances cũ sẽ không được áp dụng
  - Khi scaling in (giảm size) sẽ ưu tiên terminate những instances có launch configuration sớm nhất
+ - Update launch configuration
+   - config mới sẽ chỉ áp dụng cho instances được tạo mới sau đó => instances cũ sẽ không được áp dụng
+   => Khi update launch configuration và cần đồng bộ lại launch configuration có thể làm theo cách sau:
+      Update launch configuration => Tăng số lượng instance lên gấp đôi => VD hiện tại đang 4 instances => mở thêm 4 instances nữa
+      => Sau đó đưa số lượng instances về lại 4 => Auto Scaling thực hiện scaling in => ưu tiên remove 4 instances cũ nhất => launch configuration sẽ mới nhất
+   
+   <img width="640" alt="Screen Shot 2023-03-05 at 11 05 10" src="https://user-images.githubusercontent.com/57032236/222941094-59da70d8-11eb-48a1-969f-df4310d7b791.png">
 <hr/>
 
 ### API Gateway
