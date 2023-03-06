@@ -94,7 +94,7 @@
               SourceSecurityGroupOwnerId: !GetAtt myELB.SourceSecurityGroup.OwnerAlias
               SourceSecurityGroupName: !GetAtt myELB.SourceSecurityGroup.GroupName
      ```
-   - !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
+   ##### !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
      ```
      Name: !Sub 
       - 'www.${Domain}'
@@ -105,7 +105,7 @@
      
      Name: Fn::Sub: "Hello ${AWS::Region}"
      ```
-   - !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
+   ##### !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
      - Sử dụng với parameters => Trả về gía trị của parameter
      - Sử dụng với resouces => Trả về physical ID của resouce tương ứng
      ```
@@ -120,7 +120,7 @@
             - !Ref SSHSecurityGroup
             - !Ref ServerSecurityGroup
      ```
-   - !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key (mapping là tập hợp các biến tĩnh trong template)
+   ##### !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key (mapping là tập hợp các biến tĩnh trong template)
      ```
      Mappings: 
       RegionMap: 
@@ -140,7 +140,7 @@
             - HVM64
           InstanceType: m1.small
      ```
-   - !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
+   ##### !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
      ```
      Resources:
       myBucketResource:
@@ -152,13 +152,13 @@
           ServiceToken: !ImportValue EmptyS3BucketLambda
           BucketName: !Ref myBucketResource
      ```
-   - !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
+   ##### !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
      ```
      !Join [ ":", [ a, b, c ] ]
      
      // This will return "a:b:c"
      ```
-   - !Base64/Fn::Base64 => trả về biểu diễn Base64 của chuỗi đầu vào. Hàm này thường được sử dụng để truyền dữ liệu đã mã hóa sang các phiên bản Amazon EC2 bằng thuộc tính UserData.
+   ##### !Base64/Fn::Base64 => trả về biểu diễn Base64 của chuỗi đầu vào. Hàm này thường được sử dụng để truyền dữ liệu đã mã hóa sang các phiên bản Amazon EC2 bằng thuộc tính UserData.
      ```
      Resources:
       MyInstance:
@@ -181,7 +181,7 @@
               echo "Hello World from user data" > /var/www/html/index.html
      ```
      NOTE good to know: UserData log sẽ được ghi vào /var/log/cloud-init-output.log
-   - Conditions:
+   ##### Conditions:
      - !Equals/Fn::Equals
      - !And/Fn::And
      - !If/Fn::If
