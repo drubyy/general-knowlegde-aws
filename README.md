@@ -201,6 +201,12 @@
    - Delete (setting mặc định nếu không chỉ định DeletionPolicy cụ thể cho resource)
      - Tuy nhiên đối với resouce là AWS::RDS::DBCluster thì default DeletionPolicy sẽ là Snapshot
      - Đối với resouce là S3 bucket thì default vẫn là delete tuy nhiên cần lưu ý là bắt buộc phải thực hiện empty bucket trước khi thực hiện xóa => CloudFormation sẽ không tự thực hiện empty bucket
+    
+ #### Terminaltion Protection on Stack
+ Có thể setting "Enable termination protection" với giá trị là Enabled để chống việc xóa stack, chỉ có thể xóa stack khi disable "Enable termination protection"
+ 
+ ![image](https://user-images.githubusercontent.com/57032236/223033459-da57166a-2970-40a9-b6ba-6f704ca2606d.png)
+
  #### NOTE:
    - Khi update stack không thể thay đổi tên stack
    - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
