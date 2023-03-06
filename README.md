@@ -211,7 +211,10 @@
    - Khi update stack không thể thay đổi tên stack
    - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
    - Đối với nested stacks (Stack trong stack) thì khi update stack con sẽ luôn thực hiện update stack cha
-   - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng cách zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
+   - Có thể sử dụng "DependsOn" để chỉ định resouce phụ thuộc vào 1 resouce khác, tương tự như docker-compose
+   - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
+     - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
+     - zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
      ```
      MyFunction:
      Type: AWS::Lambda::Function
