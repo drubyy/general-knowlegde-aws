@@ -67,10 +67,11 @@
    Nhìn vào template trên sẽ hiểu được chúng ta định nghĩa ra 1 instance EC2 với AMI id là "ami-2f726546", instance type là "t1.micro", key pair là "testkey" và một EBS có type là "iop1",...
    ![image](https://user-images.githubusercontent.com/57032236/180631172-4de1791b-2f3b-4165-af90-8831378b90da.png)
    
- - Stack: Đơn vị dùng để gọi 1 nhóm các tài nguyên được định nghĩa bởi 1 template, chẳng hạn như khi có 1 file cloudFormation bao gồm các resources: ASG, ELB, RDS,...tạo các resources trên bằng AWS cloudFormation sẽ tương đương với 1 stack
+ #### Stack
+ - Là đơn vị dùng để gọi 1 nhóm các tài nguyên được định nghĩa bởi 1 template, chẳng hạn như khi có 1 file cloudFormation bao gồm các resources: ASG, ELB, RDS,...tạo các resources trên bằng AWS cloudFormation sẽ tương đương với 1 stack
  - Sử dụng output Export xuất giá trị đầu ra để có thể tái sử dụng ở 1 stack khác
- - Function:
-   - !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
+ #### Function:
+   ##### !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
      ```
      Resources:
       myELB:
