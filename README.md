@@ -206,6 +206,15 @@
  Có thể setting "Enable termination protection" với giá trị là Enabled để chống việc xóa stack, chỉ có thể xóa stack khi disable "Enable termination protection"
  
  ![image](https://user-images.githubusercontent.com/57032236/223033459-da57166a-2970-40a9-b6ba-6f704ca2606d.png)
+ 
+ #### Custom resource
+  - Có thể định nghĩa custom resource, ý tưởng là sử dụng lambda để định nghĩa resouce đó
+  - có thể áp dụng để giải quyết một số case như sau:
+  - Định nghĩa 1 resource AWS mới chưa được CloudFormation cover
+  - Định nghĩa tài nguyên On-Premise
+  - Empty bucket S3 trước khi thực hiện xóa stack
+  - Kéo AMI id
+  - ...
 
  #### NOTE:
    - Khi update stack không thể thay đổi tên stack
