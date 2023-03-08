@@ -216,62 +216,43 @@
   - Kéo AMI id
   - ...
 
- #### NOTE:
-   - Khi update stack không thể thay đổi tên stack
-   - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
-   - Đối với nested stacks (Stack trong stack) thì khi update stack con sẽ luôn thực hiện update stack cha
-   - Có thể sử dụng "DependsOn" để chỉ định resouce phụ thuộc vào 1 resouce khác, tương tự như docker-compose
-   - Đối với template có tạo resource cấp quyền ví dụ như IAM::Role, IAM::User,... thì cần xác nhận cụ thể cho phép CloudFormation có 1 trong 2 khả năng sau:
-     - Nếu sử dụng IAM resources, có thể chỉ định 1 trong 2 <b>CAPABILITY_IAM</b> hoặc <b>CAPABILITY_NAMED_IAM</b>
-     - Nếu là resources IAM custom name thì cần chỉ định <b>CAPABILITY_NAMED_IAM</b>
-     - Nếu không chỉ định rõ capabilities (khả năng) này cho resources, CloudFormation sẽ trả về lỗi <b>InsufficientCapabilities</b>
-   - Có thể set stack policy để control hành động đối với stack, ví dụ
-     ```
-     {
-         "Statement": [
-             {
-                 "Effect": "Allow",
-                 "Action": "Update:*",
-                 "Principal": "*",
-                 "Resource": "*"
-             },
-             {
-                 "Effect": "Deny",
-                 "Action": "Update:*",
-                 "Principal": "*",
-                 "Resource": "LogicalResourceId/CriticalSecurityGroup"
-             },
-             {
-                 "Effect" : "Deny",
-                 "Action" : "Update:*",
-                 "Principal": "*",
-                 "Resource" : "*",
-                 "Condition" : {
-                   "StringEquals" : {
-                     "ResourceType" : ["AWS::RDS::DBInstance"]
-                   }
-                 }
-             }
-         ]
-     }
-     ```
-     => Để có thể thực hiện update resource "CriticalSecurityGroup" thì có 2 cách:
-        - Sử dụng lệnh aws cloudformation set-stack-policy với --stack-policy-body để nhập chính sách muốn thay đổi HOẶC --stack-policy-url để chỉ định đường dẫn đến tệp policy => Sẽ sửa stack policy vĩnh viễn.
-        - Sửa stack policy trong quá trình update stack resources => Chỉ sửa tạm thời tại thời điểm update resources => Sau khi xong xem lại stack policy vẫn sẽ như cũ
-   - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
-     - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
-     - zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
+ #### Stack policy
+  - Có thể set stack policy để control hành động đối với stack, ví dụ
+      ```
+      {
+          "Statement": [
+              {
+                  "Effect": "Allow",
+                  "Action": "Update:*",
+                  "Principal": "*",
+                  "Resource": "*"
+              },
+              {
+                  "Effect": "Deny",
+                  "Action": "Update:*",
+                  "Principal": "*",
+                  "Resource": "LogicalResourceId/CriticalSecurityGroup"
+              },
+              {
+                  "Effect" : "Deny",
+                  "Action" : "Update:*",
+                  "Principal": "*",
+                  "Resource" : "*",
+                  "Condition" : {
+                    "StringEquals" : {
+                      "ResourceType" : ["AWS::RDS::DBInstance"]
+                    }
+                  }
+              }
+          ]
+      }
+      ```
+      => Để có thể thực hiện update resource "CriticalSecurityGroup" thì có 2 cách:
+         - Sử dụng lệnh aws cloudformation set-stack-policy với --stack-policy-body để nhập chính sách muốn thay đổi HOẶC --stack-policy-url để chỉ định đường dẫn đến tệp policy => Sẽ sửa stack policy vĩnh viễn.
+         - Sửa stack policy trong quá trình update stack resources => Chỉ sửa tạm thời tại thời điểm update resources => Sau khi xong xem lại stack policy vẫn sẽ như cũ
 
-     ```
-     MyFunction:
-     Type: AWS::Lambda::Function
-     Properties:
-       Code:
-         S3Bucket: !Sub 'lambda-zips-${AWS::Region}'
-       ...
-     ```
-     
-   - Có thể sử dụn cfn-init để thiết lập UserData theo một cách khác, ý tưởng là đưa các câu lệnh UserData vào metadata của resource => UserData sẽ tham chiếu đến đó
+ #### CFN init
+ - Có thể sử dụn cfn-init để thiết lập UserData theo một cách khác, ý tưởng là đưa các câu lệnh UserData vào metadata của resource => UserData sẽ tham chiếu đến đó
 
    ```
    Resources:
@@ -318,90 +299,113 @@
    // Cần lưu ý rằng các câu lệnh UserData sẽ không ghi log theo như cách sử dụng trực tiếp UserData bằng hàm Fn::Base64 như ví dụ trên => xem log /var/log/cloud-init-output.log sẽ không ghi log các câu lệnh đó => Để xem log cfn-init thì sẽ xem ở /var/log/cfn-init.log (Tổng quan) hoặc /var/log/cfn-init-cmd.log (Chi tiết)
    ```
    
-   - cfn-signal: Sử dụng để thông báo tín hiệu dạng như waitting condition
+ #### CFN-signal
+  - cfn-signal: Sử dụng để thông báo tín hiệu dạng như waitting condition
 
-   ```
-   Resources:
-    MyInstance:
-      Type: AWS::EC2::Instance
-      Properties:
-        AvailabilityZone: us-east-1a
-        ImageId: ami-009d6802948d06e52
-        InstanceType: t2.micro
-        KeyName: !Ref SSHKey
-        SecurityGroups:
-          - !Ref SSHSecurityGroup
-        # we install our web server with user data
-        UserData: 
-          Fn::Base64:
-            !Sub |
-              #!/bin/bash -xe
-              # Get the latest CloudFormation package
-              yum update -y aws-cfn-bootstrap
-              # Start cfn-init
-              /opt/aws/bin/cfn-init -s ${AWS::StackId} -r MyInstance --region ${AWS::Region}
-              # Start cfn-signal to the wait condition
-              /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource SampleWaitCondition --region ${AWS::Region}
-      Metadata:
-        Comment: Install a simple Apache HTTP page
-        AWS::CloudFormation::Init:
-          config:
-            packages:
-              yum:
-                httpd: []
-            files:
-              "/var/www/html/index.html":
-                content: |
-                  <h1>Hello World from EC2 instance!</h1>
-                  <p>This was created using cfn-init</p>
-                mode: '000644'
-            commands:
-              hello:
-                command: "echo 'hello world'"
-            services:
-              sysvinit:
-                httpd:
-                  enabled: 'true'
-                  ensureRunning: 'true'
+  ```
+  Resources:
+   MyInstance:
+     Type: AWS::EC2::Instance
+     Properties:
+       AvailabilityZone: us-east-1a
+       ImageId: ami-009d6802948d06e52
+       InstanceType: t2.micro
+       KeyName: !Ref SSHKey
+       SecurityGroups:
+         - !Ref SSHSecurityGroup
+       # we install our web server with user data
+       UserData: 
+         Fn::Base64:
+           !Sub |
+             #!/bin/bash -xe
+             # Get the latest CloudFormation package
+             yum update -y aws-cfn-bootstrap
+             # Start cfn-init
+             /opt/aws/bin/cfn-init -s ${AWS::StackId} -r MyInstance --region ${AWS::Region}
+             # Start cfn-signal to the wait condition
+             /opt/aws/bin/cfn-signal -e $? --stack ${AWS::StackId} --resource SampleWaitCondition --region ${AWS::Region}
+     Metadata:
+       Comment: Install a simple Apache HTTP page
+       AWS::CloudFormation::Init:
+         config:
+           packages:
+             yum:
+               httpd: []
+           files:
+             "/var/www/html/index.html":
+               content: |
+                 <h1>Hello World from EC2 instance!</h1>
+                 <p>This was created using cfn-init</p>
+               mode: '000644'
+           commands:
+             hello:
+               command: "echo 'hello world'"
+           services:
+             sysvinit:
+               httpd:
+                 enabled: 'true'
+                 ensureRunning: 'true'
 
-    SampleWaitCondition:
-      CreationPolicy:
-        ResourceSignal:
-          Timeout: PT2M
-          Count: 1
-      Type: AWS::CloudFormation::WaitCondition
-      
-      // Có thể thấy rằng EC2 chạy script UserData => chạy cfn-init => Chờ 1 instance EC2 trong vòng 2 phút (PT2M) thông báo tín hiệu tốt để tiếp tục tạo stack. Chỉ khi có signal tốt thì stack mới tiếp tục việc tạo còn không thì sẽ có trạng thái failure. Nhưng quan trọng là sẽ chỉ có ý nghĩa nếu đi kèm config enable rollback on failure => Có thể tưởng tượng rollback on failure giống như transaction => raise error thì sẽ rollback tất, còn nếu disable rollback on failure thì sẽ không rollback gì
-      
-      // Wait condition có thể sẽ không nhận được tín hiệu từ EC2 instance nên cần đảm bảo các điều kiện sau:
-      // - Đảm bảo rằng AMI EC2 đang sử dụng đã được cài CloudFormation helper scripts, nếu chưa cài thì cần download
-      // - Đảm bảo rằng câu lệnh cfn-init & cfn-signal thành công, nếu có lỗi thì có thể debug bằng cách xem log /var/log/cloud-init.log hoặc /var/log/cfn-init.log. Nhưng muốn giữ lại log và xem log để debug thì cần lưu ý rằng disabled rollback on failure nếu không thì CloudFormation sẽ xoá instance đó khi stack create fail
-      // Điều quan trọng nữa là cần đảm bảo instance có kết nối internet. Nếu instance nằm trong private subnet thì cần sử dụng NAT gateway, nếu public thì có thể sử dụng luôn Internet gateway
-   ```
-   
-   - CFN hub:
-     - WHAT: CFN init sẽ chỉ được chạy lần đâù khi tạo resource (CFN init sẽ lấy thông tin từ metadata để chạy), khi update metadata của resource thì stack CloudFormation sẽ không replace resource đó => CFN-hub sử dụng để thiết lập một schedule phát hiện sự thay đổi của metadata của resource, kết hợp với cfn hook để chỉ định làm 1 việc gì đó theo nhu cầu
-     - VD:
-       ```
-        - 1 Stack có các resources:
-          - 1 instance EC2
-          - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
-          - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
+   SampleWaitCondition:
+     CreationPolicy:
+       ResourceSignal:
+         Timeout: PT2M
+         Count: 1
+     Type: AWS::CloudFormation::WaitCondition
 
-       - Sau khi create resource xong thì làm các step:
-         - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
-         - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
-         - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
+     // Có thể thấy rằng EC2 chạy script UserData => chạy cfn-init => Chờ 1 instance EC2 trong vòng 2 phút (PT2M) thông báo tín hiệu tốt để tiếp tục tạo stack. Chỉ khi có signal tốt thì stack mới tiếp tục việc tạo còn không thì sẽ có trạng thái failure. Nhưng quan trọng là sẽ chỉ có ý nghĩa nếu đi kèm config enable rollback on failure => Có thể tưởng tượng rollback on failure giống như transaction => raise error thì sẽ rollback tất, còn nếu disable rollback on failure thì sẽ không rollback gì
 
-       => Khi này cần đến CFN-hub bằng cách
-         - Thiết lập cfn-hub.conf
-         - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
-         - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
-      ```
-      
-     - Được cấu hình trong /etc/cfn/cfn-hub.conf
-     - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
-     - Sau khi kiểm tra định kỳ theo interval, nếu đã tìm thấy sự thay đổi (changes) thì CFN-hub sẽ chạy file /etc/cfn/hooks.d/cfn-auto-reloader.conf
+     // Wait condition có thể sẽ không nhận được tín hiệu từ EC2 instance nên cần đảm bảo các điều kiện sau:
+     // - Đảm bảo rằng AMI EC2 đang sử dụng đã được cài CloudFormation helper scripts, nếu chưa cài thì cần download
+     // - Đảm bảo rằng câu lệnh cfn-init & cfn-signal thành công, nếu có lỗi thì có thể debug bằng cách xem log /var/log/cloud-init.log hoặc /var/log/cfn-init.log. Nhưng muốn giữ lại log và xem log để debug thì cần lưu ý rằng disabled rollback on failure nếu không thì CloudFormation sẽ xoá instance đó khi stack create fail
+     // Điều quan trọng nữa là cần đảm bảo instance có kết nối internet. Nếu instance nằm trong private subnet thì cần sử dụng NAT gateway, nếu public thì có thể sử dụng luôn Internet gateway
+  ```
+  
+ #### CFN hub:
+   - WHAT: CFN init sẽ chỉ được chạy lần đâù khi tạo resource (CFN init sẽ lấy thông tin từ metadata để chạy), khi update metadata của resource thì stack CloudFormation sẽ không replace resource đó => CFN-hub sử dụng để thiết lập một schedule phát hiện sự thay đổi của metadata của resource, kết hợp với cfn hook để chỉ định làm 1 việc gì đó theo nhu cầu
+   - VD:
+     ```
+      - 1 Stack có các resources:
+        - 1 instance EC2
+        - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
+        - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
+
+     - Sau khi create resource xong thì làm các step:
+       - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
+       - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
+       - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
+
+     => Khi này cần đến CFN-hub bằng cách
+       - Thiết lập cfn-hub.conf
+       - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
+       - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
+    ```
+
+   - Được cấu hình trong /etc/cfn/cfn-hub.conf
+   - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
+   - Sau khi kiểm tra định kỳ theo interval, nếu đã tìm thấy sự thay đổi (changes) thì CFN-hub sẽ chạy file /etc/cfn/hooks.d/cfn-auto-reloader.conf
+
+ #### NOTE:
+   - Khi update stack không thể thay đổi tên stack
+   - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
+   - Đối với nested stacks (Stack trong stack) thì khi update stack con sẽ luôn thực hiện update stack cha
+   - Có thể sử dụng "DependsOn" để chỉ định resouce phụ thuộc vào 1 resouce khác, tương tự như docker-compose
+   - Đối với template có tạo resource cấp quyền ví dụ như IAM::Role, IAM::User,... thì cần xác nhận cụ thể cho phép CloudFormation có 1 trong 2 khả năng sau:
+     - Nếu sử dụng IAM resources, có thể chỉ định 1 trong 2 <b>CAPABILITY_IAM</b> hoặc <b>CAPABILITY_NAMED_IAM</b>
+     - Nếu là resources IAM custom name thì cần chỉ định <b>CAPABILITY_NAMED_IAM</b>
+     - Nếu không chỉ định rõ capabilities (khả năng) này cho resources, CloudFormation sẽ trả về lỗi <b>InsufficientCapabilities</b>
+   - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
+     - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
+     - zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
+
+     ```
+     MyFunction:
+     Type: AWS::Lambda::Function
+     Properties:
+       Code:
+         S3Bucket: !Sub 'lambda-zips-${AWS::Region}'
+       ...
+     ```
 <hr/>
 
 ### CloudFront
