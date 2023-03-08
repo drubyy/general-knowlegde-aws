@@ -397,9 +397,10 @@
          - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
       ```
 
-    - Được cấu hình trong /etc/cfn/cfn-hub.conf
-    - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
-    - Sau khi kiểm tra định kỳ theo interval, nếu đã tìm thấy sự thay đổi (changes) thì CFN-hub sẽ chạy file /etc/cfn/hooks.d/cfn-auto-reloader.conf
+
+     - Được cấu hình trong /etc/cfn/cfn-hub.conf
+     - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
+     - Sau khi kiểm tra định kỳ theo interval, nếu đã tìm thấy sự thay đổi (changes) thì CFN-hub sẽ chạy file /etc/cfn/hooks.d/cfn-auto-reloader.conf
 <hr/>
 
 ### CloudFront
