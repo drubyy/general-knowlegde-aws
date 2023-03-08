@@ -381,20 +381,20 @@
      - VD:
 
        ```
-       1 Stack có các resources:
-         - 1 instance EC2
-         - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
-         - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
+        - 1 Stack có các resources:
+          - 1 instance EC2
+          - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
+          - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
 
-      Sau khi create resource xong thì làm các step:
-        - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
-        - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
-        - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
-        
-      => Khi này cần đến CFN-hub bằng cách
-        - Thiết lập cfn-hub.conf
-        - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
-        - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
+       - Sau khi create resource xong thì làm các step:
+         - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
+         - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
+         - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
+
+       => Khi này cần đến CFN-hub bằng cách
+         - Thiết lập cfn-hub.conf
+         - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
+         - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
       ```
 
      - Được cấu hình trong /etc/cfn/cfn-hub.conf
