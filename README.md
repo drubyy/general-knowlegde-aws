@@ -364,22 +364,22 @@
  #### CFN hub:
    - WHAT: CFN init sẽ chỉ được chạy lần đâù khi tạo resource (CFN init sẽ lấy thông tin từ metadata để chạy), khi update metadata của resource thì stack CloudFormation sẽ không replace resource đó => CFN-hub sử dụng để thiết lập một schedule phát hiện sự thay đổi của metadata của resource, kết hợp với cfn hook để chỉ định làm 1 việc gì đó theo nhu cầu
    - VD:
-     ```
-      - 1 Stack có các resources:
-        - 1 instance EC2
-        - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
-        - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
+   ```
+    - 1 Stack có các resources:
+      - 1 instance EC2
+      - 1 parameter có tên là messageParam dạng String (ví dụ ban đầu truyền vào là 'hello world')
+      - Sử dụng CFN-init để cài webserver nginx, sau khi cài nginx xong thì sẽ sửa file /var/www/index.html thành nội dung của messageParams
 
-     - Sau khi create resource xong thì làm các step:
-       - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
-       - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
-       - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
+   - Sau khi create resource xong thì làm các step:
+     - Mở web lên và quan sát (Khi này mở web lên sẽ có nội dung là 'hello world')
+     - Update stack => truyền lại messageParam vào stack có nội dung là "hello world edited"
+     - Mở lại web lên và quan sát vẫn sẽ thấy web có nội dung là "hello world"
 
-     => Khi này cần đến CFN-hub bằng cách
-       - Thiết lập cfn-hub.conf
-       - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
-       - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
-    ```
+   => Khi này cần đến CFN-hub bằng cách
+     - Thiết lập cfn-hub.conf
+     - Sau mỗi N (minutes) thì CFN-hub sẽ thực hiện check sự thay đổi của metadata => Nếu có sự thay đổi sẽ thực hiện các lệnh đã config trong cfn-auto-reloader.conf
+     - Set lệnh cho cfn-auto-reloader.conf là cần release bản update => khi này web sẽ được cập nhật với nội dung "hello world edited"
+  ```
 
    - Được cấu hình trong /etc/cfn/cfn-hub.conf
    - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
