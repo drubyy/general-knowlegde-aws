@@ -255,6 +255,9 @@
          ]
      }
      ```
+     => Để có thể thực hiện update resource "CriticalSecurityGroup" thì có 2 cách:
+        - Sửa lại stack policy không nằm trong bước update stack resouces => Sửa hẳn stack policy
+        - Sửa stack policy trong quá trình update stack resources => Chỉ sửa tạm thời tại thời điểm update resources => Sau khi xong xem lại stack policy vẫn sẽ như cũ
    - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
      - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
      - zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
