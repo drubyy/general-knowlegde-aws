@@ -189,8 +189,8 @@
      - !Or/Fn::Or
    - ...
  #### Change sets & Drift detection
-   - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
-   - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn
+   - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template, nếu thấy được rồi thì có thể tiếp tục execute changes để thực hiện (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
+   - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn, nhưng chỉ để xem sự thay đổi của resource, không thể force rollback về hay thay đổi bất cứ resource nào với drift detection
    
  #### Retaining data on delete
  Có thể set DeletionPolicy cho bất cứ resouce nào trong stack để kiểm soát việc gì sẽ xảy ra khi root stack bị xóa
@@ -221,6 +221,10 @@
    - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
    - Đối với nested stacks (Stack trong stack) thì khi update stack con sẽ luôn thực hiện update stack cha
    - Có thể sử dụng "DependsOn" để chỉ định resouce phụ thuộc vào 1 resouce khác, tương tự như docker-compose
+   - Đối với template có tạo resource cấp quyền ví dụ như IAM::Role, IAM::User,... thì cần xác nhận cụ thể cho phép CloudFormation có 1 trong 2 khả năng sau:
+     - Nếu sử dụng IAM resources, có thể chỉ định 1 trong 2 <b>CAPABILITY_IAM</b> hoặc <b>CAPABILITY_NAMED_IAM</b>
+     - Nếu là resources IAM custom name thì cần chỉ định <b>CAPABILITY_NAMED_IAM</b>
+     - Nếu không chỉ định rõ capabilities (khả năng) này cho resources, CloudFormation sẽ trả về lỗi <b>InsufficientCapabilities</b>
    - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
      - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
      - zip code function rồi đưa lên S3, ở template CloudFormation sử dụng !Sub để reference đến object S3 (function lambda zip) đó
