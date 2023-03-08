@@ -256,7 +256,7 @@
      }
      ```
      => Để có thể thực hiện update resource "CriticalSecurityGroup" thì có 2 cách:
-        - Sửa lại stack policy không nằm trong bước update stack resouces => Sửa hẳn stack policy
+        - Sử dụng lệnh aws cloudformation set-stack-policy với --stack-policy-body để nhập chính sách muốn thay đổi HOẶC --stack-policy-url để chỉ định đường dẫn đến tệp policy => Sẽ sửa stack policy vĩnh viễn.
         - Sửa stack policy trong quá trình update stack resources => Chỉ sửa tạm thời tại thời điểm update resources => Sau khi xong xem lại stack policy vẫn sẽ như cũ
    - Để định nghĩa 1 hàm lambda trong cloudFormation, có thể sử dụng 2 cách:
      - Viết lambda function inline, tuy nhiên template yml sẽ có giới hạn nên nếu làm cách này chỉ viết với hàm lambda đơn giản, nên sử dụng cách số 2
