@@ -639,7 +639,8 @@
    => Sự khác nhau giữa dedicated instance và dedicated host
    ![image](https://user-images.githubusercontent.com/57032236/180655410-dc9f4b59-1483-4684-bd89-cc12fc1a911c.png)
  - Có thể enable/disable DeleteOnTermination đối với EBS để quy định khi terminate instance có xoá ổ EBS hay không. Hành động này có thể thực hiện được kể cả khi EC2 running
- 
+<hr/>
+
 ### Elastic load balancer
  - Khi tạo load balancer => cần tạo target group => cần chỉ định target type => Khi tạo xong target group KHÔNG THỂ thay đổi target type
  - #### Target types
