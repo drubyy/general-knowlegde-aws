@@ -664,7 +664,14 @@
  - Chỉ cần upload code lên mà không cần lo về vấn đề deployment, performance về mặt infra, monitoring,...
  - Vẫn có quyền access vào các resources
  - Không tính thêm phí, chỉ tính phí các tài nguyên sử dụng như: EC2, ECS,...
- - #### Deployment stragies
+ #### Config
+  - Có 3 cách config Beanstalk
+    - Sử dụng ebextensions/
+    - Sử dụng saved config
+    - Config trực tiếp sử dụng CLI, console, SDK,...
+
+   Thứ tự ưu tiên apply vào EB sẽ là: Setting trực tiếp > Saved configurations > Config files (.ebextensions/) > default value
+ #### Deployment stragies
    - All-at-Once: Tất cả instances trong 1 lần
      ![image](https://user-images.githubusercontent.com/57032236/180630279-cb57e0fb-59c5-48c7-add6-2fb153e2117c.png)
      
