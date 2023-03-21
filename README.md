@@ -26,6 +26,47 @@
 
 <hr/>
 
+### Beanstalk
+ #### Hook
+ 
+ ```
+ # Commands
+ 
+ # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customize-containers-ec2.html#linux-commands 
+ # You can use the commands key to execute commands on the EC2 instance. The commands run before the application and web server are set up and the application version file is extracted.
+ commands:
+   create_hello_world_file:
+     command: touch hello-world.txt
+     cwd: /home/ec2-user
+
+ # Container Commands
+ # https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customize-containers-ec2.html#linux-container-commands
+
+ # You can use the container_commands key to execute commands that affect your application source code. Container commands run after the application and web server have been set up and the application version archive has been extracted, but before the application version is deployed. 
+ container_commands:
+   modify_index_html:
+     command: 'echo " - modified content" >> index.html'
+
+   database_migration:
+     command: 'echo "do a database migration"'
+     # You can use leader_only to only run the command on a single instance
+     leader_only: true
+ ```
+ - command: Chạy trước khi application được giải nén và web server được setup
+ - container_commands: Chạy sau khi application được giải nén và web server được setup, tuy nhiên chạy trước khi app được deploy
+   - NOTE:
+     - Có thể sử dụng "leader_only" để chạy duy nhất 1 instance, ví dụ như case có 10 instances và cần thực hiện migrate database, việc thực hiện migrate cho DB chỉ cần chạy 1 lần duy nhất, không cần thiết chạy cả 10 lần => Sử dụng leader_only (chỉ có thể sử dụng với container_commands)
+ 
+ #### Update Stragies
+  - All at once (downtime)
+  - Rolling
+  - Rolling with additional batches (Giống rolling tuy nhiên khi instance thực hiện update sẽ có 1 instance mới thay thế vị trí đó => không bị giảm số lượng instances khi thực hiện update)
+  - Immutable: Tạo mới tất cả instances sang một ASG mới => thực hiện update cho các instances mới này, khi thành công các instances sẽ thực hiện swap lại tất cả instances
+
+ #### NOTE
+  - Có thể có tối đa 1000 versions application, có thể sử dụng life cycle để thực hiện quản lý vòng đời của version
+<hr/>
+
 ### Budget
  - Cần dữ liệu của 5 tuần để có thể dự báo ngân sách
 <hr/>
