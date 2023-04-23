@@ -1051,19 +1051,23 @@
   - Llà dịch vụ điều phối serverless cho phép tích hợp với các hàm AWS Lambda và các dịch vụ AWS khác để xây dựng các workflow phức tạp bằng cách chia nhỏ các bước, định nghĩa các step cần làm gì khi success, khi failed
 
   ![image](https://user-images.githubusercontent.com/57032236/233834210-85037aea-ca6b-46af-a5c5-8c19c59cde03.png)
+  
   Như ví dụ này thì có thể gộp tất cả vào 1 hàm lambda, tuy nhiên hạn chế sẽ là:
     - Maximum timeout của 1 hàm lambda là 15 minutes => Hạn chế về mặt thời gian
     - Nếu gộp chung lại thành 1 hàm => hàm to => phức tạp
     => Để giải quyết thì sẽ dựng 1 StepFunction như ảnh mô tả
 
   ![image](https://user-images.githubusercontent.com/57032236/183231878-c24a7454-7b4d-4b55-88a1-cbbf004b94b7.png)
+  
  #### Usecase:
   ##### Function orchestration / Phối hợp chức năng
    ![image](https://user-images.githubusercontent.com/57032236/233834445-86794394-35ce-46fb-9bbe-8e8cac83d1d7.png)
+   
    Tạo 1 flow bao gồm các hàm lambda, hàm trước gọi hàm sau, hàm sau gọi hàm sau nữa. Bằng cách này có thể thấy kết quả của từng step -> dễ dang debug xem sai ở step nào
    
   ##### Branching / Phân nhánh chức năng
    ![image](https://user-images.githubusercontent.com/57032236/233834542-1918861a-c811-478e-b651-103926520ded.png)
+   
    VD: 1 user gửi request đến hệ thống yêu cầu tăng hạn mức thẻ tín dụng
        - Trong trường hợp nằm trong được phép thì có thể cho phép StepFunction call 1 hàm lambda tự động duyệt yêu cầu.
        - Còn nếu trường hợp vượt quá mức được phép duyệt tự động thì có thể gọi 1 hàm lambda khác gửi yêu cầu đó đến admin để duyệt thủ công.
@@ -1078,14 +1082,17 @@
      
   ##### Human in the loop
    ![image](https://user-images.githubusercontent.com/57032236/233835150-7395ede6-fa46-483d-aa34-23fcdc419019.png)
+   
     VD: Sử dụng một app ngân hàng, một user gửi tiền cho một người bạn. User đó chờ email xác nhận. Với 1 callback và task token, Step Function yêu cầu Lambda gửi tiền người bạn của user đó và báo cáo lại khi bạn của user nhận được. Sau khi Lambda báo cáo lại rằng bạn của user đã nhận được tiền, Step Functions chuyển sang bước tiếp theo trong workflow, đó là gửi cho user đó 1 email xác nhận.
     
   ##### Parallel processing / Tiến trình song song
    ![image](https://user-images.githubusercontent.com/57032236/233835237-4a5940c1-334c-406f-80c8-f80ae208fbfb.png)
+   
    VD: Một user chuyển đổi tệp video thành năm độ phân giải màn hình khác nhau để người xem có thể xem video trên nhiều thiết bị. Sử dụng Parallel state, Step Functions nhập tệp video, Lambda có thể xử lý tệp đó thành năm độ phân giải màn hình cùng một lúc.
    
   ##### Dynamic parallelism / Song song động
    ![image](https://user-images.githubusercontent.com/57032236/233835327-48c6ccff-b3d2-468e-8c3e-d14be0b82b4d.png)
+   
    VD: Một khách hàng đặt ba mặt hàng và bạn cần chuẩn bị từng mặt hàng để giao. Bạn kiểm tra tình trạng sẵn có của từng mặt hàng, tập hợp từng mặt hàng rồi đóng gói từng mặt hàng để giao. Khi sử dụng Map state, Step Functions để Lambda xử lý song song từng mặt hàng của khách hàng. Sau khi tất cả các mặt hàng của khách hàng của bạn được đóng gói để giao, Step Functions sẽ chuyển sang bước tiếp theo trong workflow, đó là gửi cho khách hàng một email xác nhận có thông tin theo dõi.
 <hr/>
 
