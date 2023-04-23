@@ -23,7 +23,21 @@
  - Để custom response trả về => sử dụng API Gateway mapping templates
  - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
    ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
-
+ #### Deploy
+ Có thể triển khai API với 3 kiểu:
+  - Regional: Khả dụng đối với region tạo API (public)
+  - Edge optimized: Triển khai tới tất cả cloudfront edge location => Khả năng call API và giảm độ trễ ở toàn cầu
+  - Private: Chỉ có thể sử dụng với VPC endpoint hoặc API Gateway
+  
+ #### Integration types
+ Khi định nghĩa 1 method API gateway, có thể bảo API đó thực hiện tương tác với gì
+ ![image](https://user-images.githubusercontent.com/57032236/233836942-4f2d3d03-aa36-4b41-ae65-708dde905ea6.png)
+ 
+ - Lambda: invoke 1 lambda function
+ - Http: Gửi request đến 1 endpoint Http
+ - Mock: Loại tích hợp này cho phép API Gateway trả về phản hồi mà không cần gửi thêm yêu cầu đến BE. Điều này hữu ích cho thử nghiệm API vì nó có thể được sử dụng để kiểm tra thiết lập tích hợp mà không phát sinh phí sử dụng BE và để cho phép cộng tác phát triển API.
+ - AWS Service
+ - VPC link
 <hr/>
 
 ### Beanstalk
