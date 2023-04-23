@@ -892,10 +892,21 @@
  - Lambda chỉ sử dụng được image docker được lưu ở ECS trên cùng 1 account
  - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
  - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được
- - Khi code hàm lambda sử dụng nodejs, cần cài các dependencies thì cần nén cả code và dependencies vào 1 folder
  - Giới hạn concurrency/AWS region là 1000 (của all lambda function chứ không phải của 1 function)
    => vì thế có thể sẽ xảy ra trường hợp ví dụ như, có 3 function A, B, C. A và B sử dụng hết concurrency => khi C được gọi sẽ bị exception. Để giải quyết trường hợp này thì có thể set reserve concurrency (quy định số concurrency được sử dụng cho func), khi set như này thì sẽ không có func C sẽ không bị A và B chiếm concurrency.
    => Hoặc nếu thực sự cần thiết thì có thể raise ticket AWS support để tăng hạn nghạch concurrency lên
+   
+ #### Lambda layer
+  - Khi code hàm lambda mà cần sử dụng thư viện gì đó thì có thể sử dụng lambda layer, kiểu dạng đóng gói rồi mang lên lambda, khi nào cần thì import vào
+  - Có thể upload dạng bằng dạng file zip, file zip này có thể tải trực tiếp từ local lên hoặc lấy từ S3 về
+ #### Version
+  - 1 version là 1 snap shot của function tại thời điểm tạo, config và code của version đó là bất biến, không thể thay đổi.
+ #### Aliases
+  - Dùng để đặt tên cho 1 version lambda, ví dụ
+   - $LASTEST -> DEV
+   - Version2 -> TEST
+   - Version1 -> PROD
+  - Có thể chia traffic cho alias, ví dụ alias TEST có thể trỏ 20% đến version2 và 80% đến version1
 <hr/>
 
 ### Organizations Service Control Policy (SCP)
