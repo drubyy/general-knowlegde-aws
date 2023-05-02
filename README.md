@@ -483,6 +483,7 @@
  - Mặc định cloudtrail sẽ chỉ track những actions ở bucket-level, nếu muốn track đến object-level thì cần bật S3 data events
  - NOTE
    - cloudtrail sẽ không ghi lại sự kiện 'CreateVolume' khi EBS được tạo trong quá trình launch EC2
+   - Muốn check logs bị modify hoặc log bị xóa thì sử dụng CLI validate-logs
 <hr/>
 
 ### CloudWatch
