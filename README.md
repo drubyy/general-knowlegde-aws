@@ -487,10 +487,20 @@
 <hr/>
 
 ### CloudWatch
- - EC2 monitoring
+ - monitoring
    + Default là 5 minutes
    + Có thể setting detail monitoring => 1 minutes (thêm phí)
    + Có thể dùng custom metric để put metric theo nhu cầu (VD: 1s, 5s, 10s,...)
+   + Có thể xem số liệu quá khứ tối đa là 15 tháng trước
+   + Mức độ chi tiết của số liệu sẽ tùy thuộc vào thời gian, range time càng dài thì độ chi tiết càng thấp:
+     + Trong 3 giờ trước số liệu chi tiết ở mức dưới 1 minute
+     + 15 days - 1 minute
+     + 63 days - 5 minutes
+     + 15 months - 1 hour
+ - Alarm
+   + Không thể kết hợp nhiều metric để tạo alarm, chỉ có thể dựa trên 1 metric
+   + Chỉ có thể set notification với SNS, nếu muốn thực hiện thông báo khác thì vẫn cần thông qua SNS, sau đó từ SNS sẽ thực hiện chuyển tiếp
+   + Để tạo Billing Alarm thì cần chuyển region đến North Virginia, tuy nhiên thì alarm sẽ áp dụng cho các service ở all region
 <hr/>
 
 ### CodeBuild
