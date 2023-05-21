@@ -1121,6 +1121,15 @@
 
   VD: Một khách hàng đặt ba mặt hàng và bạn cần chuẩn bị từng mặt hàng để giao. Bạn kiểm tra tình trạng sẵn có của từng mặt hàng, tập hợp từng mặt hàng rồi đóng gói từng mặt hàng để giao. Khi sử dụng Map state, Step Functions để Lambda xử lý song song từng mặt hàng của khách hàng. Sau khi tất cả các mặt hàng của khách hàng của bạn được đóng gói để giao, Step Functions sẽ chuyển sang bước tiếp theo trong workflow, đó là gửi cho khách hàng một email xác nhận có thông tin theo dõi.
 <hr/>
+ 
+ ### Session manager
+ - Là service hỗ trợ access vào EC2 instance mà không sử dụng ssh, ví dụ 1 EC2 gắn với 1 security group không mở cổng 22 (dành cho SSH), session manager vẫn có thể access vào EC2 instance đó một cách bình thường, chỉ cần có IAM permission có quyền truy cập là được access
+ - Có thể chỉ định người dùng, nhóm người dùng nào được phép access vào instances nào hoặc không được phép vào instances nào
+ - Có thể restrict người dùng nhập command nào
+ - Có thể access bằng AWS console, CLI, SDK
+ ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/1fe274ad-931f-46bc-b506-c7b8097c0c8c)
+
+<hr/>
 
 ### X-Ray
 - Là service hỗ trợ theo dấu và cho ra cái nhìn tổng quát khi ứng dụng sử dụng micro service (Ví dụ như web sử dụng các micro services => X-Ray sẽ chạy qua các micro service và tổng hợp lại cho ra 1 sơ đồ, từ đó có cái nhìn tổng quan)
