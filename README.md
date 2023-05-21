@@ -1133,6 +1133,10 @@
   - Có thể restrict người dùng nhập command nào
   - Có thể access bằng AWS console, CLI, SDK
   ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/1fe274ad-931f-46bc-b506-c7b8097c0c8c)
+ 
+  #### Automation
+  - Automation là một khả năng của AWS Systems Manager, giúp đơn giản hóa các tác vụ bảo trì, triển khai và khắc phục chung cho các dịch vụ AWS như Amazon Elastic Compute Cloud (Amazon EC2), Amazon Relational Database Service (Amazon RDS), Amazon Redshift, Amazon Simple Storage Service (Amazon S3), và nhiều dịch vụ khác
+ <img width="587" alt="Screen Shot 2023-05-21 at 16 17 57" src="https://github.com/drubyy/general-knowlegde-aws/assets/57032236/d078afbb-6071-4a32-b1ff-4ae588521e79">
 
 <hr/>
 
