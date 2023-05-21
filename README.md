@@ -919,7 +919,7 @@
  - Tổng size environment variable không được vượt quá 4KB, không limit số lượng
  - Có thể sử dụng ổ đĩa tạm thời /tmp để lưu trữ dữ liệu (disk size = 512MB), sau khi lambda kết thúc chương trình chạy => ổ đĩa này sẽ được
  - Giới hạn concurrency/AWS region là 1000 (của all lambda function chứ không phải của 1 function)
-   => vì thế có thể sẽ xảy ra trường hợp ví dụ như, có 3 function A, B, C. A và B sử dụng hết concurrency => khi C được gọi sẽ bị exception. Để giải quyết trường hợp này thì có thể set reserve concurrency (quy định số concurrency được sử dụng cho func), khi set như này thì sẽ không có func C sẽ không bị A và B chiếm concurrency.
+   => vì thế có thể sẽ xảy ra trường hợp ví dụ như, có 3 function A, B, C. A và B sử dụng hết concurrency => khi C được gọi sẽ bị exception. Để giải quyết trường hợp này thì có thể set reserve concurrency (quy định số concurrency được sử dụng cho func. kiểu dạng như có 1000 ghế xem phim, chúng ta sẽ đặt trước là chúng ta cần bao nhiêu ghế, số ghế còn lại thì người khác sẽ có thể sử dụng), khi set như này thì sẽ không có func C sẽ không bị A và B chiếm concurrency.
    => Hoặc nếu thực sự cần thiết thì có thể raise ticket AWS support để tăng hạn nghạch concurrency lên
    
  #### Lambda layer
