@@ -27,7 +27,7 @@
   - Edge optimized: Triển khai tới tất cả cloudfront edge location => Khả năng call API và giảm độ trễ ở toàn cầu
   - Private: Chỉ có thể sử dụng với VPC endpoint hoặc API Gateway
   
- #### Integration types
+ ## Integration types
  Khi định nghĩa 1 method API gateway, có thể bảo API đó thực hiện tương tác với gì
  ![image](https://user-images.githubusercontent.com/57032236/233836942-4f2d3d03-aa36-4b41-ae65-708dde905ea6.png)
  
@@ -38,8 +38,8 @@
  - VPC link
 <hr/>
 
-### Beanstalk
- #### Hook
+# Beanstalk
+ ## Hook
  
  ```
  # Commands
@@ -69,25 +69,25 @@
    - NOTE:
      - Có thể sử dụng "leader_only" để chạy duy nhất 1 instance, ví dụ như case có 10 instances và cần thực hiện migrate database, việc thực hiện migrate cho DB chỉ cần chạy 1 lần duy nhất, không cần thiết chạy cả 10 lần => Sử dụng leader_only (chỉ có thể sử dụng với container_commands)
  
- #### Update Stragies
+ ## Update Stragies
   - All at once (downtime)
   - Rolling
   - Rolling with additional batches (Giống rolling tuy nhiên khi instance thực hiện update sẽ có 1 instance mới thay thế vị trí đó => không bị giảm số lượng instances khi thực hiện update)
   - Immutable: Tạo mới tất cả instances sang một ASG mới => thực hiện update cho các instances mới này, khi thành công các instances sẽ thực hiện swap lại tất cả instances
 
- #### NOTE
+ ## NOTE
   - Có thể có tối đa 1000 versions application, có thể sử dụng life cycle để thực hiện quản lý vòng đời của version
 <hr/>
 
-### Budget
+# Budget
  - Cần dữ liệu của 5 tuần để có thể dự báo ngân sách
 <hr/>
 
-### CDK
+# CDK
  - Sử dụng để định nghĩa các resources bằng các ngôn ngữ lập trình quen thuộc như: python, java, js,...
 <hr/>
 
-### CloudFormation
+# CloudFormation
  - Viết file quản lý cơ sở hạ tầng, cung cấp và mô tả các tài nguyên AWS cũng như bên thứ 3. VD: Cung cấp VPC, subnet, EC2, ECS, CI/CD,...
    ```
    {
@@ -120,11 +120,11 @@
    Nhìn vào template trên sẽ hiểu được chúng ta định nghĩa ra 1 instance EC2 với AMI id là "ami-2f726546", instance type là "t1.micro", key pair là "testkey" và một EBS có type là "iop1",...
    ![image](https://user-images.githubusercontent.com/57032236/180631172-4de1791b-2f3b-4165-af90-8831378b90da.png)
    
- #### Stack
+ ## Stack
  - Là đơn vị dùng để gọi 1 nhóm các tài nguyên được định nghĩa bởi 1 template, chẳng hạn như khi có 1 file cloudFormation bao gồm các resources: ASG, ELB, RDS,...tạo các resources trên bằng AWS cloudFormation sẽ tương đương với 1 stack
  - Sử dụng output Export xuất giá trị đầu ra để có thể tái sử dụng ở 1 stack khác
- #### Function:
-   ##### !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
+ ## Function:
+   ### !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
      ```
      Resources:
       myELB:
@@ -147,7 +147,7 @@
               SourceSecurityGroupOwnerId: !GetAtt myELB.SourceSecurityGroup.OwnerAlias
               SourceSecurityGroupName: !GetAtt myELB.SourceSecurityGroup.GroupName
      ```
-   ##### !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
+   ### !Sub/Fn::Sub => Thay thế các biến trong chuỗi đầu vào bằng các giá trị chỉ định
      ```
      Name: !Sub 
       - 'www.${Domain}'
@@ -158,7 +158,7 @@
      
      Name: Fn::Sub: "Hello ${AWS::Region}"
      ```
-   ##### !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
+   ### !Ref => Trả về giá trị của tham số hoặc tham chiếu đến tài nguyên được chỉ định
      - Sử dụng với parameters => Trả về gía trị của parameter
      - Sử dụng với resouces => Trả về physical ID của resouce tương ứng
      ```
@@ -173,7 +173,7 @@
             - !Ref SSHSecurityGroup
             - !Ref ServerSecurityGroup
      ```
-   ##### !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key (mapping là tập hợp các biến tĩnh trong template)
+   ### !FindInMap/Fn::FindInMap trả về giá trị tương ứng với các key (mapping là tập hợp các biến tĩnh trong template)
      ```
      Mappings: 
       RegionMap: 
@@ -193,7 +193,7 @@
             - HVM64
           InstanceType: m1.small
      ```
-   ##### !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
+   ### !ImportValue/Fn::ImportValue => Để import value từ stack khác vào
      ```
      Resources:
       myBucketResource:
@@ -205,13 +205,13 @@
           ServiceToken: !ImportValue EmptyS3BucketLambda
           BucketName: !Ref myBucketResource
      ```
-   ##### !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
+   ### !Join/Fn::Join => Để join 2 giá trị lại với nhau (như join string trong ruby)
      ```
      !Join [ ":", [ a, b, c ] ]
      
      // This will return "a:b:c"
      ```
-   ##### !Base64/Fn::Base64 => trả về biểu diễn Base64 của chuỗi đầu vào. Hàm này thường được sử dụng để truyền dữ liệu đã mã hóa sang các phiên bản Amazon EC2 bằng thuộc tính UserData.
+   ### !Base64/Fn::Base64 => trả về biểu diễn Base64 của chuỗi đầu vào. Hàm này thường được sử dụng để truyền dữ liệu đã mã hóa sang các phiên bản Amazon EC2 bằng thuộc tính UserData.
      ```
      Resources:
       MyInstance:
@@ -234,18 +234,18 @@
               echo "Hello World from user data" > /var/www/html/index.html
      ```
      NOTE good to know: UserData log sẽ được ghi vào /var/log/cloud-init-output.log
-   ##### Conditions:
+   ### Conditions:
      - !Equals/Fn::Equals
      - !And/Fn::And
      - !If/Fn::If
      - !Not/Fn::Not
      - !Or/Fn::Or
    - ...
- #### Change sets & Drift detection
+ ## Change sets & Drift detection
    - Change sets: Là tập hợp những thay đổi sắp tới SẮP được áp dụng cho template, nếu thấy được rồi thì có thể tiếp tục execute changes để thực hiện (có thể hình dung như git, trước khi commit sẽ được xem các file changed)
    - Drift detection: Là những thay đổi ĐÃ được thực hiện một cách THỦ CÔNG đối với cơ sở hạ tầng (Có thể hiểu là những thay đổi thủ công mà không thông qua re-build cloudFormation). Mục đích là để kiểm soát những thay đổi ngoài ý muốn, nhưng chỉ để xem sự thay đổi của resource, không thể force rollback về hay thay đổi bất cứ resource nào với drift detection
    
- #### Retaining data on delete
+ ## Retaining data on delete
  Có thể set DeletionPolicy cho bất cứ resouce nào trong stack để kiểm soát việc gì sẽ xảy ra khi root stack bị xóa
    - Retain: Giữ lại resource, áp dụng với bất cứ resouce/nested stack nào
    - Snapshot: Thực hiện việc snapshot lại resource. Chỉ áp dụng với:
@@ -255,12 +255,12 @@
      - Tuy nhiên đối với resouce là AWS::RDS::DBCluster thì default DeletionPolicy sẽ là Snapshot
      - Đối với resouce là S3 bucket thì default vẫn là delete tuy nhiên cần lưu ý là bắt buộc phải thực hiện empty bucket trước khi thực hiện xóa => CloudFormation sẽ không tự thực hiện empty bucket
     
- #### Terminaltion Protection on Stack
+ ## Terminaltion Protection on Stack
  Có thể setting "Enable termination protection" với giá trị là Enabled để chống việc xóa stack, chỉ có thể xóa stack khi disable "Enable termination protection"
  
  ![image](https://user-images.githubusercontent.com/57032236/223033459-da57166a-2970-40a9-b6ba-6f704ca2606d.png)
  
- #### Custom resource
+ ## Custom resource
   - Có thể định nghĩa custom resource, ý tưởng là sử dụng lambda để định nghĩa resouce đó
   - có thể áp dụng để giải quyết một số case như sau:
   - Định nghĩa 1 resource AWS mới chưa được CloudFormation cover
@@ -269,7 +269,7 @@
   - Kéo AMI id
   - ...
 
- #### Stack policy
+ ## Stack policy
   - Có thể set stack policy để control hành động đối với stack, ví dụ
       ```
       {
@@ -304,7 +304,7 @@
          - Sử dụng lệnh aws cloudformation set-stack-policy với --stack-policy-body để nhập chính sách muốn thay đổi HOẶC --stack-policy-url để chỉ định đường dẫn đến tệp policy => Sẽ sửa stack policy vĩnh viễn.
          - Sửa stack policy trong quá trình update stack resources => Chỉ sửa tạm thời tại thời điểm update resources => Sau khi xong xem lại stack policy vẫn sẽ như cũ
 
- #### CFN init
+ ## CFN init
  - Có thể sử dụn cfn-init để thiết lập UserData theo một cách khác, ý tưởng là đưa các câu lệnh UserData vào metadata của resource => UserData sẽ tham chiếu đến đó
 
    ```
@@ -352,7 +352,7 @@
    // Cần lưu ý rằng các câu lệnh UserData sẽ không ghi log theo như cách sử dụng trực tiếp UserData bằng hàm Fn::Base64 như ví dụ trên => xem log /var/log/cloud-init-output.log sẽ không ghi log các câu lệnh đó => Để xem log cfn-init thì sẽ xem ở /var/log/cfn-init.log (Tổng quan) hoặc /var/log/cfn-init-cmd.log (Chi tiết)
    ```
    
- #### CFN-signal
+ ## CFN-signal
   - cfn-signal: Sử dụng để thông báo tín hiệu dạng như waitting condition
 
   ```
@@ -414,7 +414,7 @@
      // Điều quan trọng nữa là cần đảm bảo instance có kết nối internet. Nếu instance nằm trong private subnet thì cần sử dụng NAT gateway, nếu public thì có thể sử dụng luôn Internet gateway
   ```
   
- #### CFN hub:
+ ## CFN hub:
    - WHAT: CFN init sẽ chỉ được chạy lần đâù khi tạo resource (CFN init sẽ lấy thông tin từ metadata để chạy), khi update metadata của resource thì stack CloudFormation sẽ không replace resource đó => CFN-hub sử dụng để thiết lập một schedule phát hiện sự thay đổi của metadata của resource, kết hợp với cfn hook để chỉ định làm 1 việc gì đó theo nhu cầu
    - VD:
    ```
@@ -438,7 +438,7 @@
    - Default interval check sự thay đổi của resource trong metadata là 15 (minutes)
    - Sau khi kiểm tra định kỳ theo interval, nếu đã tìm thấy sự thay đổi (changes) thì CFN-hub sẽ chạy file /etc/cfn/hooks.d/cfn-auto-reloader.conf
 
- #### NOTE:
+ ## NOTE:
    - Khi update stack không thể thay đổi tên stack
    - Khi update stack failure => sẽ tự động rollback về version trước đó mà có trạng thái là hoạt động tốt
    - Đối với nested stacks (Stack trong stack) thì khi update stack con sẽ luôn thực hiện update stack cha
@@ -461,11 +461,11 @@
      ```
 <hr/>
 
-### CloudFront
+# CloudFront
  - CloundFront route tất cả request đến primary origin, chỉ gửi request đến origin phụ khi một request đến origin chính không thành công
 <hr/>
 
-### Cognito User Pools
+# Cognito User Pools
  - Cung cấp dịch vụ quản lý, đăng ký, đăng nhập user (Có thể hiểu usecase sử dụng cho 1 app serverless, chỉ sử dụng lambda, API gateway chẳng hạn)
  - Tích hợp sẵn, cung cấp giao diện đăng ký đăng nhập cho user, có thể custom lại view
  - Hỗ trợ đăng ký, đăng nhập với bên thứ 3 như Facebook, Google, Amazon hoặc Apple hoặc những bên khác sử cung cấp SAML
@@ -475,8 +475,8 @@
  - Sử dụng được với javascript, Android, IOS
 <hr/>
 
-### Config
- #### Overview
+# Config
+ ## Overview
  - Là service chuyên dụng để xem xét, kiểm tra và đánh giá compliance (sự tuân thủ) các config (cấu hình) của các tài nguyên AWS
    VD: Set 1 rule AWS config rằng không nên có security group nào mở cổng 22 (SSH), sau đó nếu thực hiện mở cổng 22 ở bất kỳ SG nào cùng region, AWS config sẽ báo rằng có resource SG đó không tuân thủ
  - Ngoài ra AWS còn có tính năng timeline, sẽ lưu lại tất cả cấu hình được thay đổi theo thời gian, để có thể biết rằng tại thời điểm nào thì cấu hình được thay đổi từ X -> Y
@@ -486,7 +486,7 @@
  - Không có free tier, mỗi configuration item được recorded(ghi lại) ở mỗi region sẽ cần trả $0.003, còn với evaluation (đánh giá) thì sẽ có giá $0.001 cho mỗi rule mỗi region
  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/a5f5f4cd-6ea6-4794-9f1b-6bc0bff89cec)
 
- #### Rules
+ ## Rules
   - Có sẵn khoảng 75 rules do AWS managed
   - Có thể tạo custom rule (được định nghĩa thông qua Lambda)
     VD: Có thể tạo rule kiểm tra xem các ổ instance EC2 có thuộc loại t2.micro hay không ?
@@ -499,7 +499,7 @@
   => <b>Rules chỉ để đánh giá sự tuân thủ của cấu hình, không ngăn chặn hành động dù có vi phạm rule, để ngăn chặn thì cần chặt chẽ về IAM permission</b>
 <hr/>
 
-### CloudTrail
+# CloudTrail
  - Theo dõi và ghi lại hoạt động của ACCOUNT đối với các resource AWS => khi cần check lại thay đổi resource theo scope USER NÀO thay đổi => nghĩ đến cloudtrail
  - Mặc định các log trong cloudtrail được mã hóa SSE
  - Mặc định cloudtrail sẽ chỉ track những actions ở bucket-level, nếu muốn track đến object-level thì cần bật S3 data events
@@ -508,7 +508,7 @@
    - Muốn check logs bị modify hoặc log bị xóa thì sử dụng CLI validate-logs
 <hr/>
 
-### CloudWatch
+# CloudWatch
  - monitoring
    + Default là 5 minutes
    + Có thể setting detail monitoring => 1 minutes (thêm phí)
@@ -525,7 +525,7 @@
    + Để tạo Billing Alarm thì cần chuyển region đến North Virginia, tuy nhiên thì alarm sẽ áp dụng cho các service ở all region
 <hr/>
 
-### CodeBuild
+# CodeBuild
  - What: Code build được sử dụng với mục đích build, test version code nào đó
  - Có thể sử dụng GitHub, GitHub Enterprise, BitBucket, AWS CodeCommit hoặc Amazon S3 để làm source
  - Có thể sử lý đồng thời nhiều bản build
@@ -536,15 +536,15 @@
  - Artifact: Là đầu ra của codebuild sau khi CodeBuild thực hiện build code => sẽ được lưu trữ ở đâu đó, vd như S3
 <hr/>
 
-### CodeCommit
+# CodeCommit
  - connect: Sử dụng https hoặc ssh
    + Không thể sử dụng được ssh đối với root account
    + Có thể sử dụng HTTPS đối với root account nhưng NOT RECOMMENDED
    + Nên sử dụng IAM user để connect
 <hr/>
 
-### CodeDeploy
- #### Basic
+# CodeDeploy
+ ## Basic
  - Hỗ trợ auto deploy
  - Sử dụng file appspec.yml/appspec.yaml trong root-directory
  - Cần cài CodeDeploy Agent (Install docs: https://docs.aws.amazon.com/codedeploy/latest/userguide/codedeploy-agent-operations-install.html)
@@ -553,7 +553,7 @@
    - ECS
    - Lambda
 
- #### Các chiến lược deploy (deployment strategy)
+ ## Các chiến lược deploy (deployment strategy)
    - In-place deployment
      - Application trong nhóm target deploy sẽ bị dừng và deploy code, settings,... mới nhất rồi sau đó khởi động lại
      - Chỉ hoạt động đới với EC2 / On-premises
@@ -567,7 +567,7 @@
      - Ưu điểm:
        - Zero downtime
        - Dễ dàng rollback vì đã có sẵn môi trường blue
- #### Deployment configuration
+ ## Deployment configuration
    - For EC2 / On-premise
 
      |Deployment configuration|Description|
@@ -600,7 +600,7 @@
      |CodeDeployDefault.LambdaLinear10PercentEvery10Minutes|Chuyển 10% traffic mỗi 10 phút cho đến khi chuyển xong toàn bộ|
      |CodeDeployDefault.LambdaAllAtOnce|Chuyển toàn bộ traffic 1 lúc sang lambda function version mới |
      
- #### Lifecycle Event
+ ## Lifecycle Event
    - Hooks
    ![image](https://user-images.githubusercontent.com/57032236/183232015-edf2a8ba-0642-4e7b-8ee2-7df9945ee86e.png)
    - Environment Variable Avaibility for Hooks
@@ -616,14 +616,14 @@
        - BUNDLE_ETAG
      - For case bundle from Amazon S3
        - BUNDLE_COMMIT
- #### Trigger, log, event
+ ## Trigger, log, event
  - Có thế kết hợp với AWS CloudWatch (setting trong AWS CloudWatch) để thông báo khi deployment chuyển state (failure, success,...), 1 số usecase như:
    - Gửi message slack thông báo trạng thái deployment
    - call lambda function làm gì đó
    - Kết hợp với AWS CloudWatch alarm để tự động hóa tắt, khởi động,... lại instances
  - Có thể ghi log vào CloudWatch log bằng cách cài CloudWatch Logs agent cho instances EC2, không thể ghi log deployment trực tiếp vào CloudWatch log nếu không sử dụng agent
  - Có thể sử dụng deployment trigger để trigger đến AWS SNS (setting ngay trong codedeploy)
- #### Rollback
+ ## Rollback
    - Có 2 loại rollback là: Manual Rollbacks và Automatic Rollbacks
      - Manual Rollbacks (Khi checked "Disable rollbacks" trong mục "Rollbacks" trong deployment group)
      - Automatic Rollbacks (Khi không check "Disable rollbacks" trong mục "Rollbacks" trong deployment group), có thể chọn 1 trong 2 option hoặc cả 2
@@ -634,7 +634,7 @@
        - Khi rollback sẽ rollback về revision gần nhất mà có trạng thái là SUCCESS
          revision_1 (SUCCESS) -> revision_2 (FAILURE) -> revision_3 (FAILURE) -> current_revision
          => Khi rollback sẽ rollback về revision_1
- #### Use CodeDeploy with On-Premises instances
+ ## Use CodeDeploy with On-Premises instances
    - Step 1: Config và đăng ký các instances đó với CodeDeploy
      - Để đăng ký instances với CodeDeploy có 2 cách
        - Cách 1: Sử dụng ARN của IAM user (Not recommended)
@@ -646,13 +646,13 @@
    * DOCS: https://docs.aws.amazon.com/codedeploy/latest/userguide/on-premises-instances-register.html
 <hr/>
 
-### CodeBuild
+# CodeBuild
 - Hỗ trợ define các step buildcode
 - Sử dụng file buildspec.yml trong root-directory
 - Sử dụng local build bằng CodeBuild Agent để: test, debug
 <hr/>
 
-### CodePipeline
+# CodePipeline
 - Là một service CI/CD, hiểu nôm na là kết hợp giữa source code (AWS CodeCommit, Github,...), CI (AWS CodeBuild, jenkins,...), CD (AWS CodeDeploy,...) giúp tạo nên 1 luồng hoàn chỉnh để tạo nên 1 hệ thống CI/CD. Cụ thể hơn thì CodePipeline là tập hợp các stage (các stage này có thể custom, tuỳ biến theo nhu cầu), mỗi stage là 1 tập hợp các action mong 
 
 ![image](https://k21academy.com/wp-content/uploads/2021/03/php-project-release-pipeline.png)
@@ -680,12 +680,12 @@
 ![image](https://d2908q01vomqb2.cloudfront.net/7719a1c782a1ba91c031a682a0a2f8658209adbf/2018/05/24/Screen-Shot-2018-05-24-at-9.03.04-AM.png)
 <hr/>
 
-### DynamoDB
+# DynamoDB
  - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
  - Eventually consistent VS Strongly consistent
-   - #### Eventually consistent (Đọc nhất quán cuối cùng)
+   - ## Eventually consistent (Đọc nhất quán cuối cùng)
      - Response có thể sẽ không phải data mới nhất, có thể hiểu rằng response sẽ là data tại lúc call, trong quá trình call, data có được thay đổi cũng sẽ không được trả về data mới nhất => nhanh hơn so với strongly consistent
-   - #### Strongly consistent (Đọc nhất quán mạnh mẽ)
+   - ## Strongly consistent (Đọc nhất quán mạnh mẽ)
      - Trả về dữ liệu được cập nhật mới nhất, tuy nhiên sẽ đi kèm với 1 số nhược điểm:
        - Có độ trễ cao hơn so với eventually consistent
        - Không hỗ trợ đối với global secondary indexes (chỉ mục thứ cấp toàn cầu)
@@ -693,11 +693,11 @@
      => Để improve performance đối với DynamoDB, luôn hướng tới sử dụng Eventually consistent bất cứ khi nào có thể
  - DynamoDB mặc định sử dụng Eventually consistent, trừ khi setting khác
  - Các câu lệnh GetItem, Query, Scan cho phép thêm option ConsistentRead = true để sử dụng Strongly Consistent trong quá trình thao tác.
- - #### Amazon DynamoDB Accelerator (DAX)
+ - ## Amazon DynamoDB Accelerator (DAX)
    - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB => dùng để improve performance khi hệ thống NẶNG VỀ READ
    - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
    - Tính phí theo giờ và các instance DAX không cần cam kết dài hạn
- - #### request options:
+ - ## request options:
    - ProjectionExpression: Sử dụng để filter attributes thay vì get all attributes
    - FilterExpression: Thêm điều kiện lọc records
  - Cân nhắc sử dụng Global table để improve performance khi có user ở nhiều nơi trên khắp thế giới, có thể chỉ định region table DynamoDB khả dụng => giảm khoảng cách vật lý đối với client => giảm độ trễ
@@ -719,7 +719,7 @@
           => (16 / 2) * (12 / 4) => 24 RCU/s
 <hr/>
 
-### EC2
+# EC2
  - Dedicated instance vs Dedicated host
    - Dedicated instance (phiên bản chuyên dụng): Chuyên dụng riêng cho 1 khách hàng, được ngăn cách với các instance khác về mặt vật lý ở cấp phần cứng, kể cả có liên kết đến cùng 1 tài khoản thanh toán. Tuy nhiên các instance này có thể chia sẻ phần cùng với các instance khác nếu chung 1 tài khoản
    - Dedicated host (Máy chủ chuyên dụng): Là một máy chủ vật lý riêng biệt
@@ -730,9 +730,9 @@
  - Khi stopped instance thì không phải trả phí EC2, tuy nhiên nếu có elastic IP hoặc EBS volume thì vẫn phải trả phí cho 2 service đó
 <hr/>
 
-### Elastic load balancer
+# Elastic load balancer
  - Khi tạo load balancer => cần tạo target group => cần chỉ định target type => Khi tạo xong target group KHÔNG THỂ thay đổi target type
- - #### Target types
+ - ## Target types
    - instance: chỉ định bởi các ID instance
    - ip: Chỉ định bởi các IP (Có thể đặt range dải mạng, etc: 10.0.0.0/8)
    - Lambda: Mục tiêu là 1 hàm lambda
@@ -748,19 +748,19 @@
  - Để tránh việc re-authenticate cho client khi sử dụng ELB (nhiều instance sẽ không cùng session nếu không sử dụng chung 1 nơi lưu trữ session), ta có thể enable sticky sessions, khi nhận request lần đầu từ client nếu chưa có ghi nhận nào trước đó, nó sẽ tạo ra 1 cookie có tên là AWSALB, sau đó khi client cũ đó gửi request lại, nó sẽ routing cho request đó đến instance trước đó đã xử lý request để tránh re-authenticate
 <hr/>
 
-### Elastic Beanstalk
+# Elastic Beanstalk
  - Sử dụng để triển khai, mở rộng các web application được viết bằng Java, .NET, PHP, Node.js, Ruby, Python, Go và Docker trên những máy chủ: Apache, Nginx, Passenger và IIS
  - Chỉ cần upload code lên mà không cần lo về vấn đề deployment, performance về mặt infra, monitoring,...
  - Vẫn có quyền access vào các resources
  - Không tính thêm phí, chỉ tính phí các tài nguyên sử dụng như: EC2, ECS,...
- #### Config
+ ## Config
   - Có 3 cách config Beanstalk
     - Sử dụng ebextensions/
     - Sử dụng saved config
     - Config trực tiếp sử dụng CLI, console, SDK,...
 
    Thứ tự ưu tiên apply vào EB sẽ là: Setting trực tiếp > Saved configurations > Config files (.ebextensions/) > default value
- #### Deployment stragies
+ ## Deployment stragies
    - All-at-Once: Tất cả instances trong 1 lần
      ![image](https://user-images.githubusercontent.com/57032236/180630279-cb57e0fb-59c5-48c7-add6-2fb153e2117c.png)
      
@@ -781,30 +781,30 @@
    VD: Khi init RDS trong .ebextensions/ => khi deploy lại thì RDS cũng sẽ bị restart => để tránh trường hợp này thì nên tạo RDS riêng rồi ánh xạ host & port trong Beanstalk. Trong trường hợp init trong .ebextensions/ mà muốn giữ lại data cũ thì cần snapshot lại RDS
 <hr/>
 
-### Elastic Container Registry (ECR)
+# Elastic Container Registry (ECR)
  - Là một dịch vụ để lưu trữ, quản lý các image docker tương tự dockerhub
 <hr/>   
 
-### ECS
+# ECS
  - Dùng để quản lý các container docker
  - Để config ECS, viết config trong file /etc/ecs/ecs.config
    - ECS_ENABLE_TASK_IAM_ROLE: Sử dụng để kích hoạt IAM role cho container
 <hr/>
 
-### EBS
+# EBS
  - Có thể hiểu EBS như 1 ổ đĩa thêm cho EC2
  - Nếu bật chế độ Encryption by default, từ sau đó trở đi các EBS mới được tạo ra sẽ được mã hóa theo mặc định
    - Mã hóa theo mặc định là theo region, không thể chỉ định đặc biệt EBS nào được mã hóa EBS nào không trong cùng 1 region
  - EBS hỗ trợ cả encrypt on the fly & encrypt at rest
 <hr/>
  
-### EFS
+# EFS
  - Là service lưu trữ dạng file (tệp)
  - EFS Standard - IA: tự động tiết kiệm chi phí lưu trữ đối với các tệp ít được truy xuất
 <hr/>
  
-### ElasticCache
- - Strategies
+# ElasticCache
+ ## Strategies
    - Lazy: Chỉ cached khi cần thiết, data có thể bị cũ
      ```
      // *****************************************
@@ -854,10 +854,10 @@
      ```
 <hr/>
 
-### IAM
- - #### IAM access advisor
+# IAM
+ - ## IAM access advisor
    - Sử dụng để scan / phân tích permission lần cuối được sử dụng bởi user / role là khi nào, từ đó có thể thấy được các quyền dư thừa => loại bỏ quyền dư thừa không sử dụng
- - #### IAM access analyzer
+ - ## IAM access analyzer
    - Sử dụng để phân tích các tài nguyên trong Organization hoặc trong tài khoản AWS để phát hiện các rủi ro bảo mật về chia sẻ tài nguyên ngoài ý muốn.
    - VD: 1 bucket S3 hoặc 1 role IAM chia sẻ với 1 thực thể khác bên ngoài => Thực thể đó có thể sử dụng để truy cập vào tài nguyên
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
@@ -868,7 +868,7 @@
    - RDS PostGreSQL
 <hr/>
 
-### Inspector
+# Inspector
  - Là một dịch vụ đánh giá bảo mật tự động giúp cải thiện tính bảo mật và tuân thủ của các application được deploy trên AWS
  - Đánh giá về:
    - exposure (mức độ phơi nhiễm)
@@ -876,7 +876,7 @@
    - deviations (độ sai lệch so với best practice)
 <hr/>
 
-### Kinesis
+# Kinesis
  - Hỗ trợ việc thu thập, phân tích dữ liệu real-time
  - Xử lý dữ liệu ở bất kỳ quy mô nào
  - Nếu muốn xử lý case đầu vào kinesis tăng 1 cách đột ngột thì có thể config retry (with exponential backoff) => điều này sẽ retry push data vào kinesis nếu bị lỗi
@@ -889,7 +889,7 @@
    - Log
    - Video
    - click chuột
- - #### Amazon Kinesis Video Streams
+ - ## Amazon Kinesis Video Streams
    - Thu thập, xử lý và lưu trữ dữ liệu video từ nguồn phát để phục vụ cho việc phát lại, phân tích và machine learning đến AWS
    - Use case:
      - Smart home: Kết hợp với các thiết bị gia đình có trang bị camera như chuông, camera, webcam,...Sau đó có thế sử dụng dữ liệu để tạo ra các app thông minh gia đình (Ví dụ: Tương tác với chuông cửa hỗ trợ camera từ điện thoại di động của bạn)
@@ -901,24 +901,24 @@
      - Tự động hóa công nghiệp: Có thể sử dụng để thu thập dữ liệu như tín hiệu RADAR, LIDAR, một vài dữ liệu ở thiết bị công nghiệp khác. Từ đó có tể phân tích dữ liệu bằng machine learning để sử dụng, ví dụ như dự báo tuổi thọ của van, đặt lịch thay thế linh kiện trước => giảm thiểu thời gian dừng hoạt động và lỗi dây chuyền sản xuất
      ![image](https://user-images.githubusercontent.com/57032236/180633355-05fc0169-ba43-452a-adce-ceaa63b83b8b.png)
 
- - #### Kinesis Data Streams
+ - ## Kinesis Data Streams
    - Thu thập log, dữ liệu cảm biến, dữ liệu nhấp chuột,...để phân tích, trả về output trong thời gian thực, ví dụ như bảng xếp hạng hoặc có thể chuyển data vào các hồ dữ liệu khác
    - Phân tích theo thời gian thực trong vài giây bằng lambda hoặc Amazon Kinesis Data Analystics
    ![image](https://user-images.githubusercontent.com/57032236/180633089-65f0f824-6fd7-4398-baae-5d3cba13b574.png)
 
- - #### Kinesis Data Firehose
+ - ## Kinesis Data Firehose
    - Sử dụng để tải các stream data vào hồ dữ liệu, kho chứa hoặc dịch vụ phân tích khác theo thời gian thực (hiểu đơn giản là dịch vụ chuyển tiếp data cho kenesis)
    - Cho phép thu thập, chuyển đổi và tải data vào đích đến nào đó
    ![image](https://user-images.githubusercontent.com/57032236/180633192-cef46368-4269-4213-99ac-b05c814da870.png)
    - Usecase
      - Chuyển đổi, truyền data vào S3, hồ dữ liệu khác sang các định dạng khác mà không cần xây quy trình xử lý khác
      
- - #### Kinesis Data Analytics
+ - ## Kinesis Data Analytics
    - Phân tích data cho dữ liệu phát trực tuyến trong thời gian thực bằng cách sử dụng Apache Flink
    ![image](https://user-images.githubusercontent.com/57032236/180633606-7d2ca76e-d305-48fd-8464-d1139db6e426.png)
 <hr/>
 
-### KMS
+# KMS
  - Sử dụng để tạo, quản lý các khóa
  - Tích hợp với CloudTrail để ghi lại nhật ký sư dụng khóa
  - Không hỗ trợ rotate
@@ -930,7 +930,7 @@
  ![image](https://user-images.githubusercontent.com/57032236/180655975-5eb54e40-f48b-469a-9a4d-fd2681396288.png)
 <hr/>
 
-### Lambda
+# Lambda
  - Càng tăng RAM thì CPU càng tăng (không thể tách biệt 1 trong 2, min = 128MB, max = 10GB)
  - Để cải thiện perfomance có thể
    - Tách biệt phần kết nối DB khỏi hàm(ví dụ có 10 request liên tục, nếu nhét connect DB vào trong hàm thì có mỗi lần xử lý sẽ phải connect lại, còn nếu tách ra ngoài thì chỉ cần connect 1 lần, rồi 9 lần còn lại chỉ cần xử lý logic sau đó mà k cần kết nối lại DB)
@@ -946,12 +946,12 @@
    => vì thế có thể sẽ xảy ra trường hợp ví dụ như, có 3 function A, B, C. A và B sử dụng hết concurrency => khi C được gọi sẽ bị exception. Để giải quyết trường hợp này thì có thể set reserve concurrency (quy định số concurrency được sử dụng cho func. kiểu dạng như có 1000 ghế xem phim, chúng ta sẽ đặt trước là chúng ta cần bao nhiêu ghế, số ghế còn lại thì người khác sẽ có thể sử dụng), khi set như này thì sẽ không có func C sẽ không bị A và B chiếm concurrency.
    => Hoặc nếu thực sự cần thiết thì có thể raise ticket AWS support để tăng hạn nghạch concurrency lên
    
- #### Lambda layer
+ ## Lambda layer
   - Khi code hàm lambda mà cần sử dụng thư viện gì đó thì có thể sử dụng lambda layer, kiểu dạng đóng gói rồi mang lên lambda, khi nào cần thì import vào
   - Có thể upload dạng bằng dạng file zip, file zip này có thể tải trực tiếp từ local lên hoặc lấy từ S3 về
- #### Version
+ ## Version
   - 1 version là 1 snap shot của function tại thời điểm tạo, config và code của version đó là bất biến, không thể thay đổi.
- #### Aliases
+ ## Aliases
   - Dùng để đặt tên cho 1 version lambda, ví dụ
    - $LASTEST -> DEV
    - Version2 -> TEST
@@ -959,12 +959,12 @@
   - Có thể chia traffic cho alias, ví dụ alias TEST có thể trỏ 20% đến version2 và 80% đến version1
 <hr/>
 
-### Organizations Service Control Policy (SCP)
+# Organizations Service Control Policy (SCP)
  - Sử dụng để xác định quyền TỐI THIỂU cho các tài khoản trong organization hoặc Orgazination Unit (Đơn vị con của organization)
  - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
 <hr/>
 
-### Parameter Store
+# Parameter Store
  - Cũng có thể sử dụng để lưu trữ các giá trị như SETTINGS, mật khẩu database tuy nhiên sẽ lưu dưới dạng THAM SỐ để có thể tham chiếu trên EC2, ECS, Lambda,...
  - Không hỗ trợ rotate
  - Sử dụng KMS để encrypt/decrypt
@@ -975,12 +975,12 @@
  - Free khi sử dụng standard parameter, nếu sử dụng advance thì sẽ tính phí dựa trên số lượt gọi API
 <hr/>
 
-### Permissions boundary
+# Permissions boundary
  - Sử dụng để xác định quyền tối đa được phép đối với 1 thực thể IAM (user/role)
  - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
 <hr/>
 
-### RDS (Relationship database service)
+# RDS (Relationship database service)
  - là một tập hợp các dịch vụ database
    - Aurora
      - MySQL
@@ -1001,7 +1001,7 @@
  - Automatic backup chỉ backup trên 1 AZ, không hỗ trợ backup trên nhiều vùng
 <hr/>
 
-### Route 53
+# Route 53
  - Dịch vụ dùng để định tuyến, phân giải domain sang dạng IP để điều hướng request
  - routing policy
    - Simple routing policy: Định tuyến bình thường, không có gì đặc biệt
@@ -1015,25 +1015,25 @@
    - Weighted routing policy: Định tuyến dựa trên trọng số, ví dụ có 2 môi trường => có thể định tuyến 30% đến môi trường 1, 70% đến môi trường 2 (% là tùy ý)
 <hr/>
 
-### SQS
+# SQS
  - Thời gian lưu trữ message có thể setting: 1 - 14 days. Mặc định là 4 ngày
  - Có thể chỉ định số lượng message tối đa được phép lấy trong 1 lần (max = 10)
  
- - #### messageVisibleTimeout
+ - ## messageVisibleTimeout
    Để tránh không cho nhiều consumer xử lý cùng 1 message thì có messageVisibleTimeout, có thể hiểu đây là thời gian tối đa consumer được phép xử lý message (default = 30s, minimum = 0, maximum = 12h)
- - #### delay queue
+ - ## delay queue
    Để set thời gian delay cho message enqueue => sử dụng delayQueue (default = 0s, minimum = 0s, maximum = 15 minutes)
  => Sự khác biệt giữa messageVisibleTimeout và delayQueue là:
    - messageVisibleTimeout sẽ bị ẩn đối với các consumer khác MỖI LẦN có 1 consumer nhận message
    - delayQueue sẽ ẩn message đối với TẤT CẢ consumer lần đầu tiên nó được đưa vào queue
 
- - #### Size message
+ - ## Size message
    - Tối thiểu là 1 byte (1 ký tự)
    - Max size sẽ là 256KB
    - Có thể sử dụng Amazon SQS Extended Client Library for Java để tăng kích thước tối đa lên 2GB
    - Usecase: Nếu hệ thống quan trọng về thông lượng, không quan trọng về thứ tự message => Sử dụng standard
      VD: Có background job gửi email về chương trình giảm giá sản phẩm, khuyến mãi,...
- - #### Types
+ - ## Types
    - Standard
      - Không giới hạn thông lượng (throughput) (Không giới hạn số lượt gọi API SendMessage, ReceiveMessage, DeleteMessage trong 1s)
      - Đôi khi thứ tự delivery message sẽ khác với thứ tự đẩy vào queue
@@ -1047,7 +1047,7 @@
  - Sau khi tạo SQS queue => không thể thay đổi queue type
 <hr/>
  
-### S3:
+# S3:
  - Đối với event notification, nếu không bật chế độ version thì khi 2 request đều ghi vào 1 đối tượng => có thể sẽ chỉ có 1 event notification được trigger
  - Encryption
    - Client-side encryption: Object được mã hóa trước khi gửi lên S3
@@ -1064,7 +1064,7 @@
  - Khi vừa xoá bucket xong mà sử dụng lệnh get list buckets, bucket vừa bị xoá vẫn có thể xuất hiện trong list trong 1 thời gian nhất định
 <hr/>
 
-### Serverless Application Model (SAM)
+# Serverless Application Model (SAM)
  - Sử dụng để định nghĩa, build các ứng dụng không máy chủ, nó cung cấp cú pháp viết tắt để diễn đạt các hàm, API, database và ánh xạ event
  ![image](https://user-images.githubusercontent.com/57032236/180653207-b8ee7264-5d25-4384-8084-478ce8b202de.png)
 
@@ -1084,11 +1084,11 @@
   - AWS::Serverless::StateMachine
 <hr/>
 
-### Serverless Application Repository (SAR)
+# Serverless Application Repository (SAR)
  - Là một kho các ứng dụng serverless có sẵn, có thể tái sử dụng lại
 <hr/>
 
-### Secret Manager
+# Secret Manager
  - Sử dụng để quản lý các bí mật cần thiết để TRUY CẬP CÁC ỨNG DỤNG, dịch vụ và tài nguyên AWS, ví dụ như mật khẩu database, API key,...
  - Hỗ trợ automatic rotate (Xoay định kỳ)
  - Truy xuất dữ liệu trong AWS Secret Manager bằng cách call API
@@ -1097,7 +1097,7 @@
  - Có thể truy cập từ tài khoản AWS khác
 <hr/>
  
-### Step Functions
+# Step Functions
  - Llà dịch vụ điều phối serverless cho phép tích hợp với các hàm AWS Lambda và các dịch vụ AWS khác để xây dựng các workflow phức tạp bằng cách chia nhỏ các bước, định nghĩa các step cần làm gì khi success, khi failed
 
  ![image](https://user-images.githubusercontent.com/57032236/233834210-85037aea-ca6b-46af-a5c5-8c19c59cde03.png)
@@ -1110,20 +1110,20 @@
 
  ![image](https://user-images.githubusercontent.com/57032236/183231878-c24a7454-7b4d-4b55-88a1-cbbf004b94b7.png)
 
-### Usecase:
- ##### Function orchestration / Phối hợp chức năng
+## Usecase:
+ ### Function orchestration / Phối hợp chức năng
   ![image](https://user-images.githubusercontent.com/57032236/233834445-86794394-35ce-46fb-9bbe-8e8cac83d1d7.png)
 
   Tạo 1 flow bao gồm các hàm lambda, hàm trước gọi hàm sau, hàm sau gọi hàm sau nữa. Bằng cách này có thể thấy kết quả của từng step -> dễ dang debug xem sai ở step nào
 
- ##### Branching / Phân nhánh chức năng
+ ### Branching / Phân nhánh chức năng
   ![image](https://user-images.githubusercontent.com/57032236/233834542-1918861a-c811-478e-b651-103926520ded.png)
 
   VD: 1 user gửi request đến hệ thống yêu cầu tăng hạn mức thẻ tín dụng
       - Trong trường hợp nằm trong được phép thì có thể cho phép StepFunction call 1 hàm lambda tự động duyệt yêu cầu.
       - Còn nếu trường hợp vượt quá mức được phép duyệt tự động thì có thể gọi 1 hàm lambda khác gửi yêu cầu đó đến admin để duyệt thủ công.
 
- ##### Error handling / Xử lý lỗi
+ ### Error handling / Xử lý lỗi
   ![image](https://user-images.githubusercontent.com/57032236/233834761-e1f92c28-3b9e-4209-9c59-95a94e500ba5.png)
 
   - Retry:
@@ -1131,40 +1131,40 @@
   - Catch:
     VD: Trong trường hợp sử dụng tương tự, khách hàng yêu cầu tên người dùng không khả dụng. Sử dụng câu lệnh Catch, Step Functions đề xuất tên người dùng khả dụng.
 
- ##### Human in the loop
+ ### Human in the loop
   ![image](https://user-images.githubusercontent.com/57032236/233835150-7395ede6-fa46-483d-aa34-23fcdc419019.png)
 
    VD: Sử dụng một app ngân hàng, một user gửi tiền cho một người bạn. User đó chờ email xác nhận. Với 1 callback và task token, Step Function yêu cầu Lambda gửi tiền người bạn của user đó và báo cáo lại khi bạn của user nhận được. Sau khi Lambda báo cáo lại rằng bạn của user đã nhận được tiền, Step Functions chuyển sang bước tiếp theo trong workflow, đó là gửi cho user đó 1 email xác nhận.
 
- ##### Parallel processing / Tiến trình song song
+ ### Parallel processing / Tiến trình song song
   ![image](https://user-images.githubusercontent.com/57032236/233835237-4a5940c1-334c-406f-80c8-f80ae208fbfb.png)
 
   VD: Một user chuyển đổi tệp video thành năm độ phân giải màn hình khác nhau để người xem có thể xem video trên nhiều thiết bị. Sử dụng Parallel state, Step Functions nhập tệp video, Lambda có thể xử lý tệp đó thành năm độ phân giải màn hình cùng một lúc.
 
- ##### Dynamic parallelism / Song song động
+ ### Dynamic parallelism / Song song động
   ![image](https://user-images.githubusercontent.com/57032236/233835327-48c6ccff-b3d2-468e-8c3e-d14be0b82b4d.png)
 
   VD: Một khách hàng đặt ba mặt hàng và bạn cần chuẩn bị từng mặt hàng để giao. Bạn kiểm tra tình trạng sẵn có của từng mặt hàng, tập hợp từng mặt hàng rồi đóng gói từng mặt hàng để giao. Khi sử dụng Map state, Step Functions để Lambda xử lý song song từng mặt hàng của khách hàng. Sau khi tất cả các mặt hàng của khách hàng của bạn được đóng gói để giao, Step Functions sẽ chuyển sang bước tiếp theo trong workflow, đó là gửi cho khách hàng một email xác nhận có thông tin theo dõi.
 <hr/>
  
- ### System Manager (SSM)
+ # System Manager (SSM)
  - What: Là một dịch vụ sử dụng SSM agent, đây là phần mềm có thể được cài đặt và cấu hình trên EC2, On-premise hoặc máy ảo (VM). Giúp System Manager có thể cập nhật, quản lý và cấu hình các tài nguyên này. Nó phải được cài đặt trên mỗi instance để sử dụng với Systems Manager. Hiểu đơn giản thì là một màn hình quản lý các instances EC2, các máy on-premise đi kèm với 1 vài tính năng, service khác
  - Khi launch EC2 thì một số image đã được tích hợp sẵn SSM agent nên k cần cài, còn image nào chưa có thì cần cài agent thì SSM mới có thể quản lý được instance đó
 
-  #### SSM Session manager
+  ## SSM Session manager
   - Là service hỗ trợ access vào EC2 instance mà không sử dụng ssh, ví dụ 1 EC2 gắn với 1 security group không mở cổng 22 (dành cho SSH), session manager vẫn có thể access vào EC2 instance đó một cách bình thường, chỉ cần có IAM permission có quyền truy cập là được access
   - Có thể chỉ định người dùng, nhóm người dùng nào được phép access vào instances nào hoặc không được phép vào instances nào
   - Có thể restrict người dùng nhập command nào
   - Có thể access bằng AWS console, CLI, SDK
   ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/1fe274ad-931f-46bc-b506-c7b8097c0c8c)
  
-  #### Automation
+  ## Automation
   - Automation là một khả năng của AWS Systems Manager, giúp đơn giản hóa các tác vụ bảo trì, triển khai và khắc phục chung cho các dịch vụ AWS như Amazon Elastic Compute Cloud (Amazon EC2), Amazon Relational Database Service (Amazon RDS), Amazon Redshift, Amazon Simple Storage Service (Amazon S3), và nhiều dịch vụ khác
  <img width="587" alt="Screen Shot 2023-05-21 at 16 17 57" src="https://github.com/drubyy/general-knowlegde-aws/assets/57032236/d078afbb-6071-4a32-b1ff-4ae588521e79">
 
 <hr/>
 
-### X-Ray
+# X-Ray
 - Là service hỗ trợ theo dấu và cho ra cái nhìn tổng quát khi ứng dụng sử dụng micro service (Ví dụ như web sử dụng các micro services => X-Ray sẽ chạy qua các micro service và tổng hợp lại cho ra 1 sơ đồ, từ đó có cái nhìn tổng quan)
 ![image](https://user-images.githubusercontent.com/57032236/180803943-97e0828c-c6e3-4233-bdba-41670e5bf4f8.png)
 - Có thể sử dụng debug, tìm ra nguyên nhân gốc rễ
@@ -1173,7 +1173,7 @@
 - Cần phải enable X-Ray sampling (active tracing) để có thể hoạt động
 <hr/>
 
-### Trusted advisor
+# Trusted advisor
  - Là một công cụ trực tuyến cung cấp phương pháp cải thiện in real-time theo best practice của AWS về:
    - cost optimization (tối ưu hóa chi phí)
    - security (bảo mật)
@@ -1182,7 +1182,7 @@
    - and performance improvement (cải thiện hiệu suất).
 <hr/>
 
-### NOTE SOMETHINGS
+# NOTE SOMETHINGS
  - Có thể xem các thông tin của instance: subnet-id,...
    => access url này http://169.254.169.254/latest/meta-data/instance-id
 <hr/>
