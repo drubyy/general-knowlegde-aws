@@ -484,12 +484,14 @@
  - AWS Config là một dịch vụ per-region => Cần theo dõi ở region nào thì cần setup cho region đó. Tuy nhiên có thể aggregate (tổng hợp) dữ liệu của các region và các tài khoản AWS khác vào một nơi
  - Có thể lưu trữ cấu hình của tất cả các tài nguyên vào S3 để thực hiện phân tích sau này
  - Không có free tier, mỗi configuration item được recorded(ghi lại) ở mỗi region sẽ cần trả $0.003, còn với evaluation (đánh giá) thì sẽ có giá $0.001 cho mỗi rule mỗi region
+ - Khi các accounts thuộc oganization thì k cần thực hiện ủy quyền để thực hiện aggregate
  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/a5f5f4cd-6ea6-4794-9f1b-6bc0bff89cec)
 
  ## Rules
   - Có sẵn khoảng 75 rules do AWS managed
   - Có thể tạo custom rule (được định nghĩa thông qua Lambda)
     VD: Có thể tạo rule kiểm tra xem các ổ instance EC2 có thuộc loại t2.micro hay không ?
+  - Dù có sử dụng Organization thì vẫn cần set rule cho từng tài khoản, nếu muốn deploy rules cho nhiều tài khoản thì cần sử dụng CloudFormation StackSets
   - Rules sẽ được đánh giá / kích hoạt khi:
     - Cấu hình của tài nguyên thay đổi
     - And / Or : Set lịch đánh giá theo schedule time interval (ví dụ như 2 giờ 1 lần)
@@ -497,6 +499,11 @@
   ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/e4fce7ca-96b9-4a03-97b0-98955d5ba979)
 
   => <b>Rules chỉ để đánh giá sự tuân thủ của cấu hình, không ngăn chặn hành động dù có vi phạm rule, để ngăn chặn thì cần chặt chẽ về IAM permission</b>
+ ## Conformance Pack (Gói tuân thủ)
+  - Là một tập hợp các rules cấu hình và hành động khắc phục
+  - Các Packs được tạo bởi định dạng YAML giống CloudFormation
+  - Có thể được deploy (triển khai) đến 1 tài khoản AWS hoặc accross Organization
+  - Có thể sử dụng sẵn Packs của AWS hoặc tự tạo custom packs
 <hr/>
 
 # CloudTrail
