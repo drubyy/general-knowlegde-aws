@@ -21,7 +21,7 @@
  - Để custom response trả về => sử dụng API Gateway mapping templates
  - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
    ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
- #### Deploy
+ ## Deploy
  Có thể triển khai API với 3 kiểu:
   - Regional: Khả dụng đối với region tạo API (public)
   - Edge optimized: Triển khai tới tất cả cloudfront edge location => Khả năng call API và giảm độ trễ ở toàn cầu
