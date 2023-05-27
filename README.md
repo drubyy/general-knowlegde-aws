@@ -477,6 +477,30 @@
  - Sử dụng được với javascript, Android, IOS
 <hr/>
 
+### Config
+ #### Overview
+ - Là service chuyên dụng để xem xét, kiểm tra và đánh giá compliance (sự tuân thủ) các config (cấu hình) của các tài nguyên AWS
+   VD: Set 1 rule AWS config rằng không nên có security group nào mở cổng 22 (SSH), sau đó nếu thực hiện mở cổng 22 ở bất kỳ SG nào cùng region, AWS config sẽ báo rằng có resource SG đó không tuân thủ
+ - Ngoài ra AWS còn có tính năng timeline, sẽ lưu lại tất cả cấu hình được thay đổi theo thời gian, để có thể biết rằng tại thời điểm nào thì cấu hình được thay đổi từ X -> Y
+ - Có thể nhận được alerts (SNS notification) khi có bất kỳ sự thay đổi cấu hình của resource nào
+ - AWS Config là một dịch vụ per-region => Cần theo dõi ở region nào thì cần setup cho region đó. Tuy nhiên có thể aggregate (tổng hợp) dữ liệu của các region và các tài khoản AWS khác vào một nơi
+ - Có thể lưu trữ cấu hình của tất cả các tài nguyên vào S3 để thực hiện phân tích sau này
+ - Không có free tier, mỗi configuration item được recorded(ghi lại) ở mỗi region sẽ cần trả $0.003, còn với evaluation (đánh giá) thì sẽ có giá $0.001 cho mỗi rule mỗi region
+ ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/a5f5f4cd-6ea6-4794-9f1b-6bc0bff89cec)
+
+ #### Rules
+  - Có sẵn khoảng 75 rules do AWS managed
+  - Có thể tạo custom rule (được định nghĩa thông qua Lambda)
+    VD: Có thể tạo rule kiểm tra xem các ổ instance EC2 có thuộc loại t2.micro hay không ?
+  - Rules sẽ được đánh giá / kích hoạt khi:
+    - Cấu hình của tài nguyên thay đổi
+    - And / Or : Set lịch đánh giá theo schedule time interval (ví dụ như 2 giờ 1 lần)
+
+  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/e4fce7ca-96b9-4a03-97b0-98955d5ba979)
+
+  => <b>Rules chỉ để đánh giá sự tuân thủ của cấu hình, không ngăn chặn hành động dù có vi phạm rule, để ngăn chặn thì cần chặt chẽ về IAM permission</b>
+<hr/>
+
 ### CloudTrail
  - Theo dõi và ghi lại hoạt động của ACCOUNT đối với các resource AWS => khi cần check lại thay đổi resource theo scope USER NÀO thay đổi => nghĩ đến cloudtrail
  - Mặc định các log trong cloudtrail được mã hóa SSE
