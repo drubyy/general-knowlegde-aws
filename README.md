@@ -17,7 +17,7 @@
    <img width="645" alt="Screen Shot 2023-03-05 at 11 14 22" src="https://user-images.githubusercontent.com/57032236/222941340-feaa7424-4d74-4e7e-956c-dd7a4922a1b9.png">
 <hr/>
 
-### API Gateway
+# API Gateway
  - Để custom response trả về => sử dụng API Gateway mapping templates
  - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
    ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
