@@ -509,6 +509,7 @@
  ## Organization rules vs Comformance Packs
   2 cái đều đùng để quán lý và triển khai rules nhiều account, tuy nhiên khác biệt nhất nằm ở
   ||Organization rules|Comformance Packs|
+  | --- | --- | --- |
   |Scope|AWS Organization|AWS accounts and Organization|
   |Rules count|One rule|Many rules at a time|
   |Compliance level|Managed at Orginization level|Managed at Account level|
