@@ -491,7 +491,7 @@
   - Có sẵn khoảng 75 rules do AWS managed
   - Có thể tạo custom rule (được định nghĩa thông qua Lambda)
     VD: Có thể tạo rule kiểm tra xem các ổ instance EC2 có thuộc loại t2.micro hay không ?
-  - Dù có sử dụng Organization thì vẫn cần set rule cho từng tài khoản, nếu muốn deploy rules cho nhiều tài khoản thì cần sử dụng CloudFormation StackSets
+  - Dù có sử dụng Organization thì vẫn cần set rule cho từng tài khoản, nếu muốn deploy rules cho nhiều tài khoản thì cần sử dụng CloudFormation StackSets hoặc sử dụng Organization rules
   - Rules sẽ được đánh giá / kích hoạt khi:
     - Cấu hình của tài nguyên thay đổi
     - And / Or : Set lịch đánh giá theo schedule time interval (ví dụ như 2 giờ 1 lần)
@@ -504,6 +504,14 @@
   - Các Packs được tạo bởi định dạng YAML giống CloudFormation
   - Có thể được deploy (triển khai) đến 1 tài khoản AWS hoặc accross Organization
   - Có thể sử dụng sẵn Packs của AWS hoặc tự tạo custom packs
+ ## Organization rules
+  - Tạo, cập nhật và xóa các quy tắc AWS Config trên tất cả các tài khoản trong tổ chức.
+ ## Organization rules vs Comformance Packs
+  2 cái đều đùng để quán lý và triển khai rules nhiều account, tuy nhiên khác biệt nhất nằm ở
+  ||Organization rules|Comformance Packs|
+  |Scope|AWS Organization|AWS accounts and Organization|
+  |Rules count|One rule|Many rules at a time|
+  |Compliance level|Managed at Orginization level|Managed at Account level|
 <hr/>
 
 # CloudTrail
