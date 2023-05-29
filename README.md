@@ -871,17 +871,28 @@
 <hr/>
 
 # IAM
- - ## IAM access advisor
+ ## IAM access advisor
    - Sử dụng để scan / phân tích permission lần cuối được sử dụng bởi user / role là khi nào, từ đó có thể thấy được các quyền dư thừa => loại bỏ quyền dư thừa không sử dụng
- - ## IAM access analyzer
+ ## IAM access analyzer
    - Sử dụng để phân tích các tài nguyên trong Organization hoặc trong tài khoản AWS để phát hiện các rủi ro bảo mật về chia sẻ tài nguyên ngoài ý muốn.
    - VD: 1 bucket S3 hoặc 1 role IAM chia sẻ với 1 thực thể khác bên ngoài => Thực thể đó có thể sử dụng để truy cập vào tài nguyên
+ ## IAM Identity Center
+  ### Overview
+   ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/a650c5f2-6c5c-4610-a7d3-748d751dc827)
+
+   - Cung cấp một nơi để bạn có thể tạo hoặc kết nối workforce users và centrally manage quyền truy cập của họ trên tất cả các tài khoản và ứng dụng AWS của họ.
+  ### Multi-Factor Authentication (MFA)
+   - HỖ trợ 2 modes:
+    - Every time they sign-in: Luôn luôn yêu cầu xác thực MFA
+    - Only when their sign-in context changes: Sẽ thực hiện phân tích hành vi của người dùng rồi xem xét có yêu cầu xác thực MFA hay không (thay đổi thiết bị, thay đổi browser, thay đổi location,...)
+ ## Note
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
    - Chỉ sử dụng được đối với chứng chỉ SSL/TLS bên ngoài, không sử dụng được đối với chứng chỉ do ACM cung cấp
    - Không thể quản lý chứng chỉ ở bảng điều khiển
  - Có thể authenticate database bằng IAM database authentication đối với 2 loại DB (Xác thực DB bằng chuỗi authen mà không cần mật khẩu, mỗi chuối này có lifetime = 15 minutes)
    - RDS MySQL
    - RDS PostGreSQL
+ 
 <hr/>
 
 # Inspector
