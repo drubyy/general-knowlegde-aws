@@ -1208,6 +1208,34 @@
    - service limits (giới hạn dịch vụ một cách đơn giản nhất)
    - and performance improvement (cải thiện hiệu suất).
 <hr/>
+ 
+# WAF (Web Application Fireưall)
+ ## Overview
+  - Service dùng để bảo vệ ứng dụng web từ các cách khai thác lỗ hổng phổ biến ứng dụng web hiện nay (Ở tầng ứng dụng / Layer 7)
+  - Deploy lên:
+    - Application Load Balance (localize rules)
+    - API Gateway (rules running at the regional or edge level)
+    - CloudFront (rules globally on edge locations)
+    - AppSync (Protect GraphQL APIs)
+  - Không được sử dụng để bảo vệ DDoS (DDoS cần sử dụng Shield)
+  - Rule Actions: Sẽ có Web ACL để set rules, rule có thể bao gổm IP Address, HTTP headers, HTTP body hoặc URI string, có thể rằng buộc size, vị trí địa lý, khi thỏa mãn điều kiện gì đó có thể set action sẽ làm gì
+    - Count (đếm số lần matching rule)
+    - Allow
+    - Block
+    - CAPTCHA
+  ## Managed Rules
+   - Có sẵn hơn 190 rules được quản lý bởi AWS hoặc AWS Marketplace Sellers
+   ### Groups
+    - Các rules được chia thành 4 nhóm
+      - Baseline Rule Groups: Bảo vệ khỏi những đe dọa phổ biến
+      - Use-case Specific Rule Groups: Bảo vệ cho nhiều AWS WAF use cases
+      - IP Reputation Rule Groups: Chặn những requests dựa vào nguồn (ví dụ dải IPs độc hại)
+      - Bot Control Managed Rule Groups: Chặn những request đến từ bots
+  ## Logging
+   - Có thể gửi logs đến:
+     - CloudWatch: tối đa 5MB/s
+     - S3: interval 5 phút / lần
+     - Kinesis Data Firehose: Limit theo chính sách giới hạn của Kinesis Data Firehose
 
 # NOTE SOMETHINGS
  - Có thể xem các thông tin của instance: subnet-id,...
