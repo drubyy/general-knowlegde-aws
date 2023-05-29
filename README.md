@@ -883,8 +883,8 @@
    - Cung cấp một nơi để bạn có thể tạo hoặc kết nối workforce users và centrally manage quyền truy cập của họ trên tất cả các tài khoản và ứng dụng AWS của họ.
   ### Multi-Factor Authentication (MFA)
    - HỖ trợ 2 modes:
-    - Every time they sign-in: Luôn luôn yêu cầu xác thực MFA
-    - Only when their sign-in context changes: Sẽ thực hiện phân tích hành vi của người dùng rồi xem xét có yêu cầu xác thực MFA hay không (thay đổi thiết bị, thay đổi browser, thay đổi location,...)
+     - Every time they sign-in: Luôn luôn yêu cầu xác thực MFA
+     - Only when their sign-in context changes: Sẽ thực hiện phân tích hành vi của người dùng rồi xem xét có yêu cầu xác thực MFA hay không (thay đổi thiết bị, thay đổi browser, thay đổi location,...)
  ## Note
  - Có thể sử dụng IAM để làm trình quẩn lý chứng chỉ (SSL/TLS) khi cần sử dụng HTTPS trong region không được ACM (AWS Certificate Manager) hỗ trợ
    - Chỉ sử dụng được đối với chứng chỉ SSL/TLS bên ngoài, không sử dụng được đối với chứng chỉ do ACM cung cấp
