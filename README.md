@@ -696,6 +696,12 @@
 ![image](https://d2908q01vomqb2.cloudfront.net/7719a1c782a1ba91c031a682a0a2f8658209adbf/2018/05/24/Screen-Shot-2018-05-24-at-9.03.04-AM.png)
 <hr/>
 
+# Detective
+ - Có thể sử dụng GuardDuty, Macie, Security Hub để tìm ra các lỗ hổng bảo mật, tuy nhiên nếu cần phân tích sâu hơn để xác định root cause và có action hành động cụ thể => Sử dụng Detective
+ - Detective sẽ thực hiện phân tích, điều tra và xác định nguyên nhân gốc rễ của các vấn đề bảo mật hoặc các hoạt động đáng ngờ bằng cách sử dụng Machine Learning và đồ thị
+ - Tự động thu thập thông tin từ VPC Flow logs, CloudTrail, GuardDuty và tạo view thống nhất
+<hr/>
+
 # DynamoDB
  - Sử dụng global table nếu có người dùng phân phối toàn cầu => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
  - Eventually consistent VS Strongly consistent
@@ -869,6 +875,29 @@
          return success
      ```
 <hr/>
+ 
+# GuardDuty
+ ## Overview
+  - Service theo dõi liên tục khối lượng công việc và tài khoản AWS, sử dụng thuật toán Machine Learning 1 cách thông minh để tìm ra các mỗi đe dọa
+  - Không cần cài đặt phần mềm gì, chỉ cần liock để enable lên (30 day trial)
+  - Có thể setup EventBridge rules để thông báo, hành động khi phát hiện mối nguy hiểm
+  - Là service tốt để bảo vệ khỏi các cuộc tấn công tiền điện tử (CryptoCurrency attacks)
+  - Quản trị viên GuardDuty không nhất thiết phải là q
+ 
+  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/7d03bd67-7b39-4e0b-9a97-f25bb211ff56)
+ ## Input data includes
+  - Dữ liệu đầu vào để theo dõi và phân tích bao gồm:
+    - CloudTrail Events Logs: unusual API calls, unauthorized deployments
+      - CloudTrail Management Events: create VPC, subnet, create trail,...
+      - CloudTrail S3 Data Events: get object, list objects, delete object,...
+    - VPC Flow logs: Unusual internal traffic, unusual IP address
+    - DNS logs
+    - Kubernetes Audit logs
+ ## Multi-account stratery
+  - Là chiến lược áp dụng khi:
+    - Áp dụng GuardDuty với nhiều tài khoản
+    - Liên kết các tài khoản thành viên với tài khoản quản trị viên trong tổ chức
+<hr/>
 
 # IAM
  ## IAM access advisor
@@ -892,15 +921,24 @@
  - Có thể authenticate database bằng IAM database authentication đối với 2 loại DB (Xác thực DB bằng chuỗi authen mà không cần mật khẩu, mỗi chuối này có lifetime = 15 minutes)
    - RDS MySQL
    - RDS PostGreSQL
- 
 <hr/>
 
 # Inspector
- - Là một dịch vụ đánh giá bảo mật tự động giúp cải thiện tính bảo mật và tuân thủ của các application được deploy trên AWS
- - Đánh giá về:
-   - exposure (mức độ phơi nhiễm)
-   - vulnerabilities (lỗ hổng bảo mật)
-   - deviations (độ sai lệch so với best practice)
+ ## Overview
+  - Là một dịch vụ đánh giá bảo mật tự động giúp cải thiện tính bảo mật và tuân thủ của các application được deploy trên AWS
+  - Đánh giá về:
+    - exposure (mức độ phơi nhiễm)
+    - vulnerabilities (lỗ hổng bảo mật)
+    - deviations (độ sai lệch so với best practice)
+ ## Đối tượng phân tích và đánh giá
+  ### EC2 instances (SSM agent running, EC2 instance đó phải được quản lý bởi SSM và outbound 443 đến Systems M là bắt buộc)
+   - Phân tích khả năng truy cập mạng ngoài ý muốn
+   - Phân tích OS để kiểm tra các vulnerabilities
+  ### Container images push to ECR
+  ### Lambda functions
+   - Phân tích các lỗ hổng của code và các dependencies (thực hiện phân tích khi deploy function)
+ => Sau khi phân tích xong thì sẽ báo cáo các phát hiện vào Security Hub và gửi đến EventBridge
+ => Mỗi lỗ hổng sẽ được đánh giá với 1 số điểm (risk score) để phân biệt độ ưu tiên
 <hr/>
 
 # Kinesis
@@ -1201,12 +1239,18 @@
 <hr/>
 
 # Trusted advisor
+ ## Overview
  - Là một công cụ trực tuyến cung cấp phương pháp cải thiện in real-time theo best practice của AWS về:
-   - cost optimization (tối ưu hóa chi phí)
-   - security (bảo mật)
-   - fault tolerance (khả năng chịu lỗi)
-   - service limits (giới hạn dịch vụ một cách đơn giản nhất)
-   - and performance improvement (cải thiện hiệu suất).
+   - Cost optimization (tối ưu hóa chi phí)
+   - Security (bảo mật)
+   - Fault tolerance (khả năng chịu lỗi)
+   - Service limits (mức giới hạn dịch vụ)
+   - Performance improvement (cải thiện hiệu suất).
+ ## Support Plans
+  List check sẽ tùy thuộc vào gói hỗ trợ của tài khoản
+  | Basic & Developer Support plan (7 CORE CHECKS) | Business & Enterprise Support plan (FULL CHECKS) |
+  |-|-|
+  | - S3 bucket permissions <br/> - Security groups - specific ports unrestricted <br/> - IAM <br/> MFA on Root <br/> - EBS public snapshots <br/> - RDS public snapshots <br/> - Service limits | - Full checks 5 categories trên <br/> - Có khả năng set ClouldWatch alarm khi đạt giới hạn limit <br/> Programming Access |
 <hr/>
  
 # WAF (Web Application Fireưall)
@@ -1238,6 +1282,11 @@
      - Kinesis Data Firehose: Limit theo chính sách giới hạn của Kinesis Data Firehose
 
 # NOTE SOMETHINGS
+ ## Metadata
  - Có thể xem các thông tin của instance: subnet-id,...
    => access url này http://169.254.169.254/latest/meta-data/instance-id
+ ## Cross account AMI sharing
+  - Có thể share AMI với tài khoản AWS khác
+  - Share AMI không ảnh hưởng đến ownership, chủ sở hữu vẫn không thay đổi
+  - Chỉ có thể share AMI không bị mã hóa volume hoặc volume được mã hóa b
 <hr/>
