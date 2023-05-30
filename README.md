@@ -1250,7 +1250,10 @@
   List check sẽ tùy thuộc vào gói hỗ trợ của tài khoản
   | Basic & Developer Support plan (7 CORE CHECKS) | Business & Enterprise Support plan (FULL CHECKS) |
   |-|-|
-  | - S3 bucket permissions <br/> - Security groups - specific ports unrestricted <br/> - IAM <br/> MFA on Root <br/> - EBS public snapshots <br/> - RDS public snapshots <br/> - Service limits | - Full checks 5 categories trên <br/> - Có khả năng set ClouldWatch alarm khi đạt giới hạn limit <br/> Programming Access |
+  | - S3 bucket permissions <br/> - Security groups - specific ports unrestricted <br/> - IAM <br/> - MFA on Root <br/> - EBS public snapshots <br/> - RDS public snapshots <br/> - Service limits | - Full checks 5 categories trên <br/> - Có khả năng set ClouldWatch alarm khi đạt giới hạn limit <br/> Programming Access |
+ 
+  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/9f7398ad-cc0f-4582-8f43-5d46317c9e41)
+
 <hr/>
  
 # WAF (Web Application Fireưall)
