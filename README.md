@@ -902,6 +902,19 @@
     - Áp dụng GuardDuty với nhiều tài khoản
     - Liên kết các tài khoản thành viên với tài khoản quản trị viên trong tổ chức
 <hr/>
+ 
+# Glue
+ ## Overview
+  - AWS Glue là dịch vụ tích hợp dữ liệu server-less, giúp người dùng dễ dàng tìm kiếm, chuẩn bị và chuyển đổi dữ liệu cho hoạt động phân tích, máy học và phát triển ứng dụng.
+ ## Note
+  - Glue job bookmarks: Ngăn việc xử lý lại dữ liệu cũ
+  - Glue Elastic Views:
+    - Kết hợp và sao chép data từ nhiều nguồn lưu trữ sử dụng SQL
+    - Không có custom code, Glue sẽ theo dõi các thay đổi trong source data
+    - Leverage "virtual table"
+  - Glue DataBrew: Làm sạch và chuẩn hóa dữ liệu trước khi thực hiện chuyển đổi dữ liệu
+  - Glue Studio: new GUI to create, run and monitor ETL jobs in Glue
+<hr/>
 
 # IAM
  ## IAM access advisor
