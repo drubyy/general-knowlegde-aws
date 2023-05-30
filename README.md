@@ -18,9 +18,11 @@
 <hr/>
 
 # API Gateway
- - Để custom response trả về => sử dụng API Gateway mapping templates
- - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
-   ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
+ ## Overview
+  - API Gateway có thể coi là một cổng trung gian, nó là cổng vào duy nhất tới hệ thống microservices
+  - Để custom response trả về => sử dụng API Gateway mapping templates
+  - Có thể sử dụng Lambda authorizer để uỷ quyền xác thực client call API Gateway, khi vượt qua xác thực Lambda authorizer client sẽ được cấp 1 token để thao tác với AWS resource sau đó
+    ![image](https://user-images.githubusercontent.com/57032236/184393378-58ef62ce-ef23-456f-a2e6-3015906977c0.png)
  ## Deploy
  Có thể triển khai API với 3 kiểu:
   - Regional: Khả dụng đối với region tạo API (public)
@@ -39,6 +41,8 @@
 <hr/>
 
 # Beanstalk
+ ## Overview
+  Elastic Beanstalk là một dịch vụ theo model PaaS của AWS giúp chúng ta dễ dàng triển khai các ứng dụng web và dịch vụ được phát triển bằng Java, . NET, PHP, Node. js, Python, Ruby, Go và Docker trên những máy chủ quen thuộc như Apache, Nginx, Passenger và IIS. Mục đích chính là để người dùng tập trung vào phần phát triển code thay vì cần tìm hiểu thêm vào phần build môi trường.
  ## Hook
  
  ```
