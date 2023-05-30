@@ -1048,6 +1048,16 @@
  - Sử dụng để xác định quyền tối đa được phép đối với 1 thực thể IAM (user/role)
  - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
 <hr/>
+ 
+# QuickSight
+ ## Overview
+  - Là một dịch vụ serverless business intelligence, cung cấp các phương tiện trực quan hóa dữ liệu, bảng điều khiển tương tác và phân tích dữ liệu được Machine Learning hỗ trợ.
+  - Tích hợp với nhiều CSDL v như RDS, Aurora, Athena, Redshift, S3,...
+ ## Use cases
+  - Business analystics (phân tích kinh doanh)
+  - Building visualizations (trực quan hóa xây dựng)
+  - Perform ad-hoc analysis
+<hr/>
 
 # RDS (Relationship database service)
  - là một tập hợp các dịch vụ database
@@ -1240,6 +1250,12 @@
 - Tương thích với EC2, ECS, Lambda, SQS, SNS và Elastic Beanstalk
 - Sử dụng các ngôn ngữ: Java, Node.js, .NET
 - Cần phải enable X-Ray sampling (active tracing) để có thể hoạt động
+<hr/>
+ 
+# Tag Editor
+ - Cho phép quản lý tags của nhiều resources ở một nơi
+ - Có thể add / update / delete tags
+ - S
 <hr/>
 
 # Trusted advisor
