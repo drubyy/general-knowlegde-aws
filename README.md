@@ -708,7 +708,7 @@
 
 # DynamoDB
  ## Overview
- - Sử dụng global table nếu có người dùng phân phối nhiều ở nhiều region, đối với global table ta có thể add được thêm region mà chúng ta muốn table đó hoạt động => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
+ - Sử dụng global table nếu có người dùng phân phối nhiều ở nhiều region, kiểu dạng như sao chép table ra các regions mong muốn => giảm khoảng cách vật lý giữa client và DynamoDB endpoint => Giảm độ trễ
  ## Amazon DynamoDB Accelerator (DAX)
   - Là bộ nhớ đệm, có khả năng sử dụng cao, được thiết kế riêng cho DynamoDB => dùng để improve performance khi hệ thống NẶNG VỀ READ
   - Cải thiện performance lên đến 10 lần - từ mili second -> micro second ngay cả khi có hàng triệu request mỗi giây
@@ -732,8 +732,15 @@
 
         - Để sử dụng 16 eventually consistent read / giây đối với mỗi item 12KB
           => (16 / 2) * (12 / 4) => 24 RCU/s
+ ## Stream:
+  - Hiểu đơn giản Dynamo DB stream giống như 1 cái log, sẽ theo dõi các thao tác: insert, modify, delete đối với item trong table, thường thì stream sẽ được tích hợp sử dụng cùng 1 hàm lambda function để xử lý dữ liệu log đó
+  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/1cd52061-a078-4368-a093-b4c9507563a0)
+
+  - Không được có quá 2 processes cùng đọc dữ liệu từ 1 stream cùng 1 lúc, ví dụ 1 stream đặt 3 hàm lambda cùng được trigger khi có thay đổi trong stream => lỗi throttling
+ ## TTL
+  - Khi muốn set time expire cho 1 item trong table, tạo 1 attribute có tên là X (X có thể thay đổi theo nhu cầu, ví dụ đặt là "ttl") cho item đó rồi gắn timestamp khi nào thì item đó hết hạn. Cần được chỉ định cho table biết attribute "X" chính là TTL, config này được setting trong "enable TTL",
  ## Others
-   ### Eventually consistent VS Strongly consistent
+  ### Eventually consistent VS Strongly consistent
     - Eventually consistent (Đọc nhất quán cuối cùng)
       - Response có thể sẽ không phải data mới nhất, có thể hiểu rằng response sẽ là data tại lúc call, trong quá trình call, data có được thay đổi cũng sẽ không được trả về data mới nhất => nhanh hơn so với strongly consistent
     - Strongly consistent (Đọc nhất quán mạnh mẽ)
@@ -744,10 +751,6 @@
       => Để improve performance đối với DynamoDB, luôn hướng tới sử dụng Eventually consistent bất cứ khi nào có thể
     - DynamoDB mặc định sử dụng Eventually consistent, trừ khi setting khác
     - Các câu lệnh GetItem, Query, Scan cho phép thêm option ConsistentRead = true để sử dụng Strongly Consistent trong quá trình thao tác.
- ## Stream:
-  - Hiểu đơn giản Dynamo DB stream giống như 1 cái log, sẽ theo dõi các thao tác: insert, modify, delete đối với item trong table, thường thì stream sẽ được tích hợp sử dụng cùng 1 hàm lambda function để xử lý dữ liệu log đó
-  ![image](https://github.com/drubyy/general-knowlegde-aws/assets/57032236/1cd52061-a078-4368-a093-b4c9507563a0)
-
 <hr/>
 
 # EC2
