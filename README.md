@@ -1051,9 +1051,10 @@
   - Có thể chia traffic cho alias, ví dụ alias TEST có thể trỏ 20% đến version2 và 80% đến version1
 <hr/>
 
-# Organizations Service Control Policy (SCP)
- - Sử dụng để xác định quyền TỐI THIỂU cho các tài khoản trong organization hoặc Orgazination Unit (Đơn vị con của organization)
- - Chỉ sử dụng để hạn chế quyền, không dùng để cung cấp quyền
+# Organizations
+  ## Service Control Policy (SCP)
+ - Có thể định nghĩa white list và black list các actions cho các tài khoản trong organization hoặc Orgazination Unit (Đơn vị con của organization)
+ - Không áp dụng đối với tài khoản root (master account)
 <hr/>
 
 # Parameter Store
