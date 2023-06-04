@@ -128,7 +128,7 @@
   - Là đơn vị dùng để gọi 1 nhóm các tài nguyên được định nghĩa bởi 1 template, chẳng hạn như khi có 1 file cloudFormation bao gồm các resources: ASG, ELB, RDS,...tạo các resources trên bằng AWS cloudFormation sẽ tương đương với 1 stack
   - Sử dụng output Export xuất giá trị đầu ra để có thể tái sử dụng ở 1 stack khác
  ## Stack set
-  - Cũng như Stack tuy nhiên dùng để deploy lên nhiều region, nhiều tài khoản AWS hoặc nhiều Organization Unit cùng 1 lúc
+  - Dùng để deploy 1 stack lên nhiều regions, nhiều tài khoản AWS hoặc nhiều Organization Unit cùng 1 lúc
  ## Function:
    ### !GetAtt/Fn::GetAtt => Trả về giá trị của 1 attribute từ một tài nguyên trong template
      ```
