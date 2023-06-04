@@ -1055,6 +1055,8 @@
   ## Service Control Policy (SCP)
  - Có thể định nghĩa white list và black list các actions cho các tài khoản trong organization hoặc Orgazination Unit (Đơn vị con của organization)
  - Không áp dụng đối với tài khoản root (master account)
+ - Nếu account thuộc Organization mà không phải master account, thì dù có là tài khoản root cũng sẽ áp dụng được/không được phép thực hiện hành động gì đó theo SCP định nghĩa
+ - SCP cần được định nghĩa rõ ràng cho phép làm hành động gì (mặc định SCP không được enable, khi enable sẽ mặc định có 1 policy fullAccess, nhưng nếu detach policy đó khỏi account, OU nào đó thi account, OU đó sẽ không thể thực hiện hành động gì => Cần định nghĩa đẩy đủ cho phép làm gì)
 <hr/>
 
 # Parameter Store
